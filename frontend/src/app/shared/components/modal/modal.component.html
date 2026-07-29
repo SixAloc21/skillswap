@@ -1,0 +1,13 @@
+<div class="modal-backdrop" (click)="onCancel()">
+  <section class="modal-card surface-card" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <h3>{{ title }}</h3>
+    <p>{{ description }}</p>
+
+    <div class="modal-card__actions">
+      <button *ngIf="showCancel" type="button" class="btn btn--secondary" (click)="onCancel()">
+        {{ cancelLabel }}
+      </button>
+      <button type="button" class="btn btn--primary" (click)="onConfirm()">{{ confirmLabel }}</button>
+    </div>
+  </section>
+</div>

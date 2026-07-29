@@ -1,0 +1,48 @@
+.help-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.help-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.help-item > strong {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--surface-dark);
+  color: white;
+}
+
+.help-item h2,
+.help-item p {
+  margin: 0;
+}
+
+.help-item div {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.help-item p {
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.help-item a {
+  width: fit-content;
+  color: var(--primary);
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .help-item {
+    grid-template-columns: 1fr;
+  }
+}

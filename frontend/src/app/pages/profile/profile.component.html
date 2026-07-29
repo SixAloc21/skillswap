@@ -1,0 +1,60 @@
+<section class="page-shell" *ngIf="vm$ | async as vm">
+  <div class="section-heading">
+    <span class="section-heading__eyebrow">Perfil</span>
+    <h1>Dashboard del usuario</h1>
+    <p>Vista simulada del perfil con estadisticas, habilidades publicadas e intereses de aprendizaje.</p>
+  </div>
+
+  <div class="profile-layout">
+    <aside class="surface-card profile-sidebar">
+      <div class="profile-sidebar__avatar" [style.background]="vm.user.avatarGradient">
+        {{ vm.user.avatarInitials }}
+      </div>
+      <h2>{{ vm.user.name }}</h2>
+      <span>{{ vm.user.headline }}</span>
+      <p>{{ vm.user.about }}</p>
+
+      <div class="profile-sidebar__meta">
+        <strong>{{ vm.user.location }}</strong>
+        <small>Oferta destacada: {{ vm.user.featuredOffer }}</small>
+      </div>
+    </aside>
+
+    <div class="profile-main">
+      <div class="profile-stats">
+        <article class="surface-card profile-stat">
+          <strong>{{ vm.user.stats.completedSwaps }}</strong>
+          <span>Intercambios realizados</span>
+        </article>
+        <article class="surface-card profile-stat">
+          <strong>{{ vm.pendingRequests }}</strong>
+          <span>Solicitudes pendientes</span>
+        </article>
+        <article class="surface-card profile-stat">
+          <strong>{{ vm.user.stats.rating }}</strong>
+          <span>Calificacion promedio</span>
+        </article>
+      </div>
+
+      <section class="surface-card profile-section">
+        <h3>Habilidades publicadas</h3>
+        <div class="profile-skills" *ngIf="vm.publishedSkills.length; else noSkills">
+          <article class="profile-skill" *ngFor="let skill of vm.publishedSkills">
+            <strong>{{ skill.title }}</strong>
+            <span>{{ skill.category }} · {{ skill.level }} · {{ skill.modality }}</span>
+          </article>
+        </div>
+        <ng-template #noSkills>
+          <p>Aun no hay habilidades publicadas con este perfil.</p>
+        </ng-template>
+      </section>
+
+      <section class="surface-card profile-section">
+        <h3>Habilidades que quiere aprender</h3>
+        <div class="profile-goals">
+          <span class="pill" *ngFor="let goal of vm.user.skillsToLearn">{{ goal }}</span>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>

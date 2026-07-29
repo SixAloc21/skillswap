@@ -1,0 +1,37 @@
+<div class="app-shell">
+  <app-navbar />
+
+  <main class="app-content">
+    <router-outlet />
+  </main>
+
+  <footer class="app-footer">
+    <div class="app-footer__brand">
+      <strong>SkillSwap</strong>
+      <p>Intercambia habilidades, practica con otras personas y construye comunidad.</p>
+      <div class="app-footer__social">
+        <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram SkillSwap">Instagram</a>
+        <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook SkillSwap">Facebook</a>
+        <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn SkillSwap">LinkedIn</a>
+      </div>
+    </div>
+
+    <div class="app-footer__contact">
+      <strong>Contacto</strong>
+      <span>contacto&#64;skillswap.local</span>
+      <span>+52 443 123 4567</span>
+      <span>Av. Aprendizaje 120, Zona Centro</span>
+    </div>
+
+    <div class="app-footer__meta">
+      <span>Angular + Spring Boot + Elasticsearch</span>
+      <span>Proyecto academico de Desarrollo de Interfaces</span>
+      <nav aria-label="Paginas complementarias">
+        <a routerLink="/contacto">Contacto</a>
+        <a routerLink="/privacidad">Privacidad</a>
+        <a routerLink="/acerca-de">Acerca de</a>
+        <a routerLink="/ayuda">Ayuda</a>
+      </nav>
+    </div>
+  </footer>
+</div>

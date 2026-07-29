@@ -1,0 +1,104 @@
+<section class="page-shell" *ngIf="skill; else skillNotFound">
+  <div class="detail-layout">
+    <article class="surface-card detail-card">
+      <div class="detail-card__top">
+        <div>
+          <span class="section-heading__eyebrow">{{ skill.category }}</span>
+          <h1>{{ skill.title }}</h1>
+          <p>{{ skill.fullDescription }}</p>
+        </div>
+
+        <span
+          class="badge"
+          [ngClass]="{
+            'badge--online': skill.modality === 'Online',
+            'badge--presencial': skill.modality === 'Presencial',
+            'badge--hibrido': skill.modality === 'Hibrido'
+          }"
+        >
+          {{ skill.modality }}
+        </span>
+      </div>
+
+      <div class="detail-grid">
+        <div class="detail-block">
+          <span>Usuario</span>
+          <strong>{{ skill.userName }}</strong>
+          <small>{{ skill.userHeadline }}</small>
+        </div>
+        <div class="detail-block">
+          <span>Nivel</span>
+          <strong>{{ skill.level }}</strong>
+          <small>Disponible desde {{ skill.location }}</small>
+        </div>
+        <div class="detail-block">
+          <span>Busca a cambio</span>
+          <strong>{{ skill.exchangeFor }}</strong>
+          <small>Intercambio flexible</small>
+        </div>
+        <div class="detail-block">
+          <span>Disponibilidad</span>
+          <strong>{{ skill.availability }}</strong>
+          <small>Modalidad {{ skill.modality.toLowerCase() }}</small>
+        </div>
+      </div>
+
+      <div class="detail-card__actions">
+        <button type="button" class="btn btn--primary" (click)="openRequestModal()">Solicitar intercambio</button>
+        <a class="btn btn--secondary" routerLink="/explorar">Volver a explorar</a>
+      </div>
+
+      <div *ngIf="statusMessage" class="status-message status-message--success">
+        {{ statusMessage }}
+      </div>
+    </article>
+
+    <aside class="detail-sidebar">
+      <div class="surface-card detail-summary">
+        <h3>Resumen rapido</h3>
+        <ul>
+          <li>Categoria: {{ skill.category }}</li>
+          <li>Nivel recomendado: {{ skill.level }}</li>
+          <li>Intercambio esperado: {{ skill.exchangeFor }}</li>
+          <li>Disponibilidad: {{ skill.availability }}</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <section *ngIf="relatedSkills.length" class="related-section">
+    <div class="section-heading">
+      <span class="section-heading__eyebrow">Relacionadas</span>
+      <h2>Mas opciones en {{ skill.category }}</h2>
+    </div>
+
+    <div class="related-grid">
+      <app-skill-card
+        *ngFor="let relatedSkill of relatedSkills"
+        [skill]="relatedSkill"
+        [showRequestButton]="false"
+        (viewDetail)="goToDetail($event)"
+      />
+    </div>
+  </section>
+</section>
+
+<ng-template #skillNotFound>
+  <section class="page-shell">
+    <div class="empty-state">
+      <h2>No encontramos esta habilidad.</h2>
+      <p>Es posible que ya no exista en la sesion actual o que el enlace este incompleto.</p>
+      <a class="btn btn--primary" routerLink="/explorar">Volver a explorar</a>
+    </div>
+  </section>
+</ng-template>
+
+<app-modal
+  *ngIf="showRequestModal && skill"
+  [title]="'Enviar solicitud de intercambio'"
+  [description]="'Vas a solicitar la habilidad ' + skill.title + ' ofrecida por ' + skill.userName + '.'"
+  confirmLabel="Enviar"
+  cancelLabel="Cancelar"
+  (confirm)="confirmRequest()"
+  (cancel)="closeRequestModal()"
+/>

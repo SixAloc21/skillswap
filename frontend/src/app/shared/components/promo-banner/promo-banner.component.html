@@ -1,0 +1,14 @@
+<section *ngIf="isVisible" class="promo-banner">
+  <div>
+    <span class="promo-banner__label">Banner digital</span>
+    <h3>{{ title }}</h3>
+    <p>{{ description }}</p>
+  </div>
+
+  <div class="promo-banner__actions">
+    <a class="btn btn--primary" [routerLink]="actionLink">{{ actionLabel }}</a>
+    <button type="button" class="promo-banner__dismiss" (click)="dismiss()" aria-label="Cerrar banner">
+      Cerrar
+    </button>
+  </div>
+</section>

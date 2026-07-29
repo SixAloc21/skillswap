@@ -1,0 +1,98 @@
+<section class="page-shell">
+  <div class="section-heading">
+    <span class="section-heading__eyebrow">Publicar</span>
+    <h1>Comparte una habilidad con la comunidad</h1>
+    <p>Este formulario valida campos en tiempo real y guarda la nueva publicacion mediante la API Spring Boot.</p>
+  </div>
+
+  <div class="publish-layout">
+    <form class="surface-card publish-form" [formGroup]="publishForm" (ngSubmit)="submit()">
+      <label>
+        <span>Nombre de habilidad</span>
+        <input type="text" formControlName="title" placeholder="Ej. Edicion de video para reels" />
+        <small *ngIf="hasError('title', 'required') || hasError('title', 'minlength')">
+          Ingresa un nombre claro de al menos 4 caracteres.
+        </small>
+      </label>
+
+      <label>
+        <span>Categoria</span>
+        <select formControlName="category">
+          <option value="">Selecciona una categoria</option>
+          <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+        </select>
+        <small *ngIf="hasError('category', 'required')">Selecciona una categoria.</small>
+      </label>
+
+      <label class="publish-form__full">
+        <span>Descripcion</span>
+        <textarea formControlName="description" rows="5" placeholder="Describe que ensenas, para quien es y como se desarrollaria la sesion."></textarea>
+        <small *ngIf="hasError('description', 'required') || hasError('description', 'minlength')">
+          La descripcion debe tener al menos 30 caracteres.
+        </small>
+      </label>
+
+      <label>
+        <span>Nivel</span>
+        <select formControlName="level">
+          <option *ngFor="let level of levels" [value]="level">{{ level }}</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Modalidad</span>
+        <select formControlName="modality">
+          <option *ngFor="let modality of modalities" [value]="modality">{{ modality }}</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Que buscas a cambio</span>
+        <input type="text" formControlName="exchangeFor" placeholder="Ej. Fotografia de producto" />
+        <small *ngIf="hasError('exchangeFor', 'required') || hasError('exchangeFor', 'minlength')">
+          Especifica que habilidad te interesa recibir.
+        </small>
+      </label>
+
+      <label>
+        <span>Disponibilidad</span>
+        <input type="text" formControlName="availability" placeholder="Ej. Martes y jueves por la tarde" />
+        <small *ngIf="hasError('availability', 'required') || hasError('availability', 'minlength')">
+          Indica un horario o rango disponible.
+        </small>
+      </label>
+
+      <label>
+        <span>Nombre del usuario</span>
+        <input type="text" formControlName="userName" placeholder="Tu nombre" />
+        <small *ngIf="hasError('userName', 'required') || hasError('userName', 'minlength')">
+          Escribe el nombre visible de la publicacion.
+        </small>
+      </label>
+
+      <div class="publish-form__actions publish-form__full">
+        <button type="submit" class="btn btn--primary">Guardar habilidad</button>
+        <a class="btn btn--secondary" routerLink="/explorar">Ver habilidades publicadas</a>
+      </div>
+    </form>
+
+    <aside class="surface-card publish-help">
+      <h3>Recomendaciones para una buena publicacion</h3>
+      <ul>
+        <li>Describe el resultado que la otra persona obtendra.</li>
+        <li>Especifica si el intercambio funciona mejor online, presencial o hibrido.</li>
+        <li>Usa un titulo concreto y una disponibilidad realista.</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<app-modal
+  *ngIf="showSuccessModal"
+  title="Habilidad publicada con exito"
+  description="La nueva habilidad ya se agrego al listado general desde el backend y quedo indexada para busqueda."
+  confirmLabel="Ver detalle"
+  cancelLabel="Seguir publicando"
+  (confirm)="viewCreatedSkill()"
+  (cancel)="closeSuccessModal()"
+/>

@@ -1,0 +1,61 @@
+<section class="page-shell" *ngIf="vm$ | async as vm">
+  <div class="section-heading">
+    <span class="section-heading__eyebrow">Matches</span>
+    <h1>Solicitudes de intercambio</h1>
+    <p>Los estados cambian de forma dinamica con clases CSS y contenido visible actualizado al instante.</p>
+  </div>
+
+  <div class="matches-stats">
+    <article class="surface-card matches-stat">
+      <strong>{{ vm.pending }}</strong>
+      <span>Pendientes</span>
+    </article>
+    <article class="surface-card matches-stat">
+      <strong>{{ vm.accepted }}</strong>
+      <span>Aceptados</span>
+    </article>
+    <article class="surface-card matches-stat">
+      <strong>{{ vm.rejected }}</strong>
+      <span>Rechazados</span>
+    </article>
+  </div>
+
+  <div class="matches-list" *ngIf="vm.matches.length; else emptyMatches">
+    <article class="surface-card match-card" *ngFor="let match of vm.matches">
+      <div class="match-card__top">
+        <div>
+          <h3>{{ match.requesterName }}</h3>
+          <p>{{ match.requesterHeadline }}</p>
+        </div>
+        <span [ngClass]="getStatusClass(match.status)">{{ match.status }}</span>
+      </div>
+
+      <div class="match-card__info">
+        <span><strong>Ofrece:</strong> {{ match.offeredSkill }}</span>
+        <span><strong>Quiere aprender:</strong> {{ match.desiredSkill }}</span>
+        <span><strong>Modalidad:</strong> {{ match.modality }}</span>
+        <span><strong>Disponibilidad:</strong> {{ match.availability }}</span>
+      </div>
+
+      <p class="match-card__message">{{ match.message }}</p>
+
+      <div class="match-card__actions" *ngIf="match.status === 'Pendiente'; else resolvedState">
+        <button type="button" class="btn btn--primary" (click)="acceptRequest(match.id)">Aceptar</button>
+        <button type="button" class="btn btn--secondary" (click)="rejectRequest(match.id)">Rechazar</button>
+      </div>
+
+      <ng-template #resolvedState>
+        <div class="match-card__resolved">
+          Estado actualizado el mismo momento en que se hizo clic en la accion correspondiente.
+        </div>
+      </ng-template>
+    </article>
+  </div>
+
+  <ng-template #emptyMatches>
+    <div class="empty-state">
+      <h3>Aun no tienes solicitudes.</h3>
+      <p>Cuando una persona solicite intercambio, las tarjetas apareceran aqui.</p>
+    </div>
+  </ng-template>
+</section>

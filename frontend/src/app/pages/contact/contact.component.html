@@ -1,0 +1,90 @@
+<section class="page-shell">
+  <div class="section-heading">
+    <span class="section-heading__eyebrow">Contacto</span>
+    <h1>Hablemos sobre SkillSwap</h1>
+    <p>Envia dudas, comentarios o propuestas para mejorar la plataforma de intercambio de habilidades.</p>
+  </div>
+
+  <div class="contact-layout">
+    <form class="surface-card contact-form" [formGroup]="contactForm" (ngSubmit)="submit()">
+      <label>
+        <span>Nombre</span>
+        <input type="text" formControlName="name" placeholder="Tu nombre completo" />
+        <small *ngIf="hasError('name', 'required') || hasError('name', 'minlength')">
+          Escribe un nombre de al menos 3 caracteres.
+        </small>
+      </label>
+
+      <label>
+        <span>Correo electronico</span>
+        <input type="email" formControlName="email" placeholder="nombre@correo.com" />
+        <small *ngIf="hasError('email', 'required') || hasError('email', 'email')">
+          Ingresa un correo valido.
+        </small>
+      </label>
+
+      <label class="contact-form__full">
+        <span>Asunto</span>
+        <input type="text" formControlName="subject" placeholder="Ej. Duda sobre intercambio" />
+        <small *ngIf="hasError('subject', 'required') || hasError('subject', 'minlength')">
+          El asunto debe tener al menos 5 caracteres.
+        </small>
+      </label>
+
+      <label class="contact-form__full">
+        <span>Mensaje</span>
+        <textarea formControlName="message" rows="6" placeholder="Cuentanos como podemos ayudarte."></textarea>
+        <small *ngIf="hasError('message', 'required') || hasError('message', 'minlength')">
+          El mensaje debe tener al menos 20 caracteres.
+        </small>
+      </label>
+
+      <div class="status-message status-message--info contact-form__full" *ngIf="showErrorMessage">
+        No se pudo enviar el mensaje. Verifica que el backend este encendido en localhost:8080.
+      </div>
+
+      <button type="submit" class="btn btn--primary contact-form__full" [disabled]="isSubmitting">
+        {{ isSubmitting ? 'Enviando...' : 'Enviar mensaje' }}
+      </button>
+    </form>
+
+    <aside class="contact-side">
+      <article class="surface-card contact-card">
+        <h2>Datos de contacto</h2>
+        <ul>
+          <li><strong>Correo:</strong> contacto&#64;skillswap.local</li>
+          <li><strong>Telefono:</strong> +52 443 123 4567</li>
+          <li><strong>Horario:</strong> Lunes a viernes, 9:00 a 18:00</li>
+          <li><strong>Ubicacion:</strong> Centro de aprendizaje SkillSwap</li>
+        </ul>
+      </article>
+
+      <article class="surface-card contact-card">
+        <h2>Redes sociales</h2>
+        <div class="social-links">
+          <a href="https://www.instagram.com/" target="_blank" rel="noreferrer">Instagram</a>
+          <a href="https://www.facebook.com/" target="_blank" rel="noreferrer">Facebook</a>
+          <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer">LinkedIn</a>
+        </div>
+      </article>
+
+      <article class="surface-card contact-map" aria-label="Mapa de ubicacion simulado">
+        <div class="contact-map__pin"></div>
+        <div>
+          <strong>Mapa de ubicacion</strong>
+          <span>Av. Aprendizaje 120, Zona Centro</span>
+        </div>
+      </article>
+    </aside>
+  </div>
+</section>
+
+<app-modal
+  *ngIf="showSuccessModal"
+  title="Mensaje enviado"
+  description="Tu mensaje quedo registrado en la API de contacto de SkillSwap."
+  confirmLabel="Entendido"
+  cancelLabel="Cerrar"
+  (confirm)="closeSuccessModal()"
+  (cancel)="closeSuccessModal()"
+/>

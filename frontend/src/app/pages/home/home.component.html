@@ -1,0 +1,127 @@
+<section class="home-hero">
+  <div class="page-shell home-hero__grid">
+    <div class="home-hero__copy">
+      <span class="section-heading__eyebrow">Comunidad SkillSwap</span>
+      <h1>Intercambia habilidades, aprende algo nuevo</h1>
+      <p>
+        SkillSwap conecta personas que quieren ensenar lo que dominan y aprender algo practico a cambio.
+        Explora ofertas, publica tu habilidad y convierte intereses compartidos en sesiones reales.
+      </p>
+
+      <div class="home-hero__actions">
+        <a class="btn btn--primary" routerLink="/explorar">Explorar habilidades</a>
+        <a class="btn btn--secondary" routerLink="/publicar">Publicar habilidad</a>
+      </div>
+
+      <div class="home-hero__stats" *ngIf="stats$ | async as stats">
+        <article class="surface-card stat-card" *ngFor="let stat of stats">
+          <strong>{{ stat.value }}</strong>
+          <span>{{ stat.label }}</span>
+        </article>
+      </div>
+    </div>
+
+    <div class="home-hero__visual surface-card">
+      <img src="assets/images/skillswap-hero.png" alt="Comunidad colaborando e intercambiando habilidades" />
+      <div class="home-hero__overlay">
+        <span class="pill">Aprendizaje flexible</span>
+        <div>
+          <strong>Online, presencial o hibrido</strong>
+          <p>Organiza intercambios segun tiempo, nivel y modalidad.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="page-shell">
+  <app-promo-banner />
+
+  <div *ngIf="statusMessage" class="status-message status-message--success">
+    {{ statusMessage }}
+  </div>
+</section>
+
+<section class="page-shell">
+  <div class="section-heading">
+    <span class="section-heading__eyebrow">Beneficios</span>
+    <h2>Una plataforma pensada para aprender practicando</h2>
+    <p>El proyecto muestra contenido dinamico, navegacion clara y componentes reutilizables listos para presentar.</p>
+  </div>
+
+  <div class="benefits-grid">
+    <article class="surface-card benefit-card">
+      <h3>Buscador con filtros</h3>
+      <p>Encuentra habilidades por texto, categoria, modalidad y nivel sin recargar la pagina.</p>
+    </article>
+    <article class="surface-card benefit-card">
+      <h3>Backend conectado</h3>
+      <p>Las publicaciones y solicitudes se procesan con Spring Boot y busqueda indexada con Elasticsearch.</p>
+    </article>
+    <article class="surface-card benefit-card">
+      <h3>Experiencia adaptable</h3>
+      <p>El diseno responde a escritorio, movil y una vista compacta orientada a wearables.</p>
+    </article>
+  </div>
+</section>
+
+<section class="page-shell">
+  <div class="section-heading">
+    <span class="section-heading__eyebrow">Categorias populares</span>
+    <h2>Empieza por un area que ya tenga movimiento</h2>
+    <p>Estas categorias concentran ofertas activas y sirven como atajo rapido hacia el buscador.</p>
+  </div>
+
+  <div class="category-grid" *ngIf="categorySummaries$ | async as categories">
+    <button
+      type="button"
+      class="surface-card category-card"
+      *ngFor="let category of categories"
+      [ngClass]="'category-card--' + category.accent"
+      (click)="openCategory(category.name)"
+    >
+      <div>
+        <strong>{{ category.name }}</strong>
+        <p>{{ category.description }}</p>
+      </div>
+      <span>{{ category.count }} ofertas</span>
+    </button>
+  </div>
+</section>
+
+<section class="page-shell">
+  <div class="section-heading">
+    <span class="section-heading__eyebrow">Habilidades destacadas</span>
+    <h2>Intercambios listos para iniciar</h2>
+    <p>Tarjetas dinamicas renderizadas con datos entregados por la API y preparadas para navegar a su detalle o solicitar intercambio.</p>
+  </div>
+
+  <div class="skills-grid" *ngIf="featuredSkills$ | async as featuredSkills">
+    <app-skill-card
+      *ngFor="let skill of featuredSkills"
+      [skill]="skill"
+      (viewDetail)="goToDetail($event)"
+      (requestExchange)="openRequestModal($event)"
+    />
+  </div>
+</section>
+
+<app-modal
+  *ngIf="showRequestModal && selectedSkill"
+  [title]="'Solicitar intercambio'"
+  [description]="'Vas a enviar una solicitud a ' + selectedSkill.userName + ' para aprender ' + selectedSkill.title + '.'"
+  confirmLabel="Enviar solicitud"
+  cancelLabel="Cancelar"
+  (confirm)="confirmRequest()"
+  (cancel)="closeRequestModal()"
+/>
+
+<app-modal
+  *ngIf="showWelcomeModal"
+  title="Bienvenido a SkillSwap"
+  description="Explora habilidades, publica lo que sabes hacer y demuestra el uso de contenido dinamico, filtros, formularios y adaptacion responsive dentro del proyecto."
+  confirmLabel="Explorar ahora"
+  cancelLabel="Cerrar"
+  (confirm)="startExploring()"
+  (cancel)="closeWelcomeModal()"
+/>

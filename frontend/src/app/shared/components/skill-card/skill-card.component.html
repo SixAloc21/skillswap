@@ -1,0 +1,26 @@
+<article class="skill-card surface-card">
+  <div class="skill-card__top">
+    <span class="pill">{{ skill.category }}</span>
+    <span [ngClass]="getModalityClass(skill.modality)">{{ skill.modality }}</span>
+  </div>
+
+  <div class="skill-card__content">
+    <div>
+      <h3>{{ skill.title }}</h3>
+      <p>{{ skill.description }}</p>
+    </div>
+
+    <div class="skill-card__meta">
+      <span><strong>Nivel:</strong> {{ skill.level }}</span>
+      <span><strong>Ofrece:</strong> {{ skill.userName }}</span>
+      <span><strong>Disponibilidad:</strong> {{ skill.availability }}</span>
+    </div>
+  </div>
+
+  <div class="skill-card__actions">
+    <button type="button" class="btn btn--secondary" (click)="onViewDetail()">Ver detalle</button>
+    <button *ngIf="showRequestButton" type="button" class="btn btn--primary" (click)="onRequestExchange()">
+      Solicitar intercambio
+    </button>
+  </div>
+</article>

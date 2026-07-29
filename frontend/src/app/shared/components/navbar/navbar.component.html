@@ -1,0 +1,68 @@
+<header class="nav-wrapper">
+  <div class="page-shell nav-wrapper__inner">
+    <a class="brand" routerLink="/" (click)="closeMenu()">
+      <span class="brand__mark">S</span>
+      <span>
+        <strong>SkillSwap</strong>
+        <small>Aprendizaje colaborativo</small>
+      </span>
+    </a>
+
+    <nav class="nav-links nav-links--desktop" aria-label="Principal">
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+      >
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <div class="nav-actions">
+      <a class="btn btn--secondary nav-publish" routerLink="/publicar">Publicar habilidad</a>
+      <button
+        type="button"
+        class="menu-toggle"
+        [ngClass]="{ 'menu-toggle--open': isMenuOpen }"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="isMenuOpen"
+        [attr.aria-label]="isMenuOpen ? 'Cerrar menu de navegacion' : 'Abrir menu de navegacion'"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+        <strong>Menu</strong>
+      </button>
+    </div>
+  </div>
+
+  <button *ngIf="isMenuOpen" type="button" class="mobile-backdrop" aria-label="Cerrar menu" (click)="closeMenu()"></button>
+
+  <nav *ngIf="isMenuOpen" class="mobile-panel" aria-label="Navegacion movil">
+    <div class="mobile-panel__group">
+      <span>Principal</span>
+      <a
+        *ngFor="let item of navItems"
+        [routerLink]="item.path"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+        (click)="closeMenu()"
+      >
+        {{ item.label }}
+      </a>
+    </div>
+
+    <div class="mobile-panel__group">
+      <span>Complementarias</span>
+      <a
+        *ngFor="let item of supportItems"
+        [routerLink]="item.path"
+        routerLinkActive="is-active"
+        (click)="closeMenu()"
+      >
+        {{ item.label }}
+      </a>
+    </div>
+  </nav>
+</header>
