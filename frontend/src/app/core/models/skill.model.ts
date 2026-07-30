@@ -25,6 +25,12 @@ export interface SkillSearchFilters {
   level: '' | SkillLevel;
 }
 
+export interface SkillSuggestion {
+  skillId: string;
+  title: string;
+  category: string;
+}
+
 export interface CategorySummary {
   name: string;
   count: number;

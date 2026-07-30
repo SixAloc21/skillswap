@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatchService } from '../../core/services/match.service';
-import { Skill, SkillSearchFilters } from '../../core/models/skill.model';
+import { Skill, SkillSearchFilters, SkillSuggestion } from '../../core/models/skill.model';
 import { SkillService } from '../../core/services/skill.service';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { SkillCardComponent } from '../../shared/components/skill-card/skill-card.component';
@@ -32,6 +32,8 @@ export class ExploreComponent implements OnInit {
   skills: Skill[] = [];
   filteredSkills: Skill[] = [];
   categories: string[] = [];
+  suggestions: SkillSuggestion[] = [];
+  showSuggestions = false;
   selectedSkill: Skill | null = null;
   showRequestModal = false;
   statusMessage = '';
@@ -69,6 +71,11 @@ export class ExploreComponent implements OnInit {
     });
   }
 
+  onSearchInput(): void {
+    this.applyFilters();
+    this.loadSuggestions();
+  }
+
   onFiltersChange(): void {
     this.applyFilters();
   }
@@ -79,8 +86,30 @@ export class ExploreComponent implements OnInit {
     this.filters.modality = '';
     this.filters.level = '';
     this.statusMessage = '';
+    this.suggestions = [];
+    this.showSuggestions = false;
     this.router.navigate([], { relativeTo: this.route, queryParams: {} });
     this.applyFilters();
+  }
+
+  selectSuggestion(suggestion: SkillSuggestion): void {
+    this.filters.query = suggestion.title;
+    this.suggestions = [];
+    this.showSuggestions = false;
+    this.applyFilters();
+  }
+
+  hideSuggestions(): void {
+    window.setTimeout(() => {
+      this.showSuggestions = false;
+    }, 120);
+  }
+
+  loadSuggestions(): void {
+    this.skillService.getSuggestions(this.filters.query).subscribe((suggestions) => {
+      this.suggestions = suggestions;
+      this.showSuggestions = suggestions.length > 0;
+    });
   }
 
   goToDetail(skillId: string): void {
@@ -115,4 +144,5 @@ export class ExploreComponent implements OnInit {
       this.filteredSkills = skills;
     });
   }
+
 }

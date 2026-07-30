@@ -37,6 +37,32 @@ Ejemplo:
 http://10.0.2.2:8080/api/wearable/notifications
 ```
 
+## App Wear OS local
+
+La app Wear OS del proyecto se encuentra en:
+
+```text
+C:\Users\nunez\AndroidStudioProjects\SkillSwapWear
+```
+
+La configuracion de URL esta en:
+
+```text
+app/src/main/java/com/example/skillswapwear/network/ApiConfig.kt
+```
+
+Para pruebas locales usa:
+
+```text
+BASE_URL = "http://10.0.2.2:8080/"
+```
+
+La app consulta solicitudes pendientes, muestra la primera disponible y permite aceptar, rechazar o guardar para despues desde el reloj.
+
+## Sincronizacion con el sitio
+
+La pagina `Matches` del frontend consulta el backend periodicamente. Esto permite que un cambio hecho desde el wearable se vea en el sitio sin recargar manualmente.
+
 ## Implementacion sugerida en Wear OS
 
 - Hacer polling cada 5 o 10 segundos al endpoint de notificaciones.

@@ -41,6 +41,11 @@ public class SkillController {
         return skillService.search(q, category, modality, level);
     }
 
+    @GetMapping("/suggestions")
+    public List<SkillSuggestion> suggestions(@RequestParam(required = false, defaultValue = "") String q) {
+        return skillService.suggestions(q);
+    }
+
     @PostMapping
     public SkillDocument create(@Valid @RequestBody SkillRequest request) {
         return skillService.create(request);

@@ -19,6 +19,7 @@ SkillSwap es una plataforma web academica para encontrar, publicar e intercambia
 - Navbar responsive con acceso a Inicio, Explorar, Publicar, Matches, Perfil y Wearable.
 - Menu hamburguesa colapsable para navegacion movil.
 - Buscador funcional por texto y descripcion.
+- Busqueda predictiva con sugerencias y tolerancia a errores de escritura.
 - Filtros por categoria, modalidad y nivel.
 - Tarjetas dinamicas de habilidades con acciones de detalle y solicitud.
 - Detalle completo de habilidad con modal de confirmacion.

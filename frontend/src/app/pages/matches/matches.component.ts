@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
-import { map } from 'rxjs';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { interval, map, startWith } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatchRequest } from '../../core/models/match-request.model';
 import { MatchService } from '../../core/services/match.service';
 
@@ -11,7 +12,8 @@ import { MatchService } from '../../core/services/match.service';
   templateUrl: './matches.component.html',
   styleUrl: './matches.component.scss'
 })
-export class MatchesComponent {
+export class MatchesComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly matchService = inject(MatchService);
 
   readonly vm$ = this.matchService.getMatches().pipe(
@@ -22,6 +24,13 @@ export class MatchesComponent {
       rejected: matches.filter((match) => match.status === 'Rechazado').length
     }))
   );
+
+  ngOnInit(): void {
+    interval(5000).pipe(
+      startWith(0),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => this.matchService.refreshMatches());
+  }
 
   acceptRequest(matchId: string): void {
     this.matchService.acceptRequest(matchId).subscribe();

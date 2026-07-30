@@ -77,18 +77,18 @@ export class MatchService {
     );
   }
 
+  refreshMatches(): void {
+    this.http.get<ApiMatch[]>(MATCHES_API_URL).pipe(
+      map((matches) => matches.map((match) => this.fromApiMatch(match))),
+      catchError(() => of(this.matchesSubject.value))
+    ).subscribe((matches) => this.matchesSubject.next(matches));
+  }
+
   private updateStatus(id: string, action: 'accept' | 'reject' | 'later'): Observable<MatchRequest> {
     return this.http.patch<ApiMatch>(`${MATCHES_API_URL}/${id}/${action}`, {}).pipe(
       map((match) => this.fromApiMatch(match)),
       tap((match) => this.patchLocalMatch(match))
     );
-  }
-
-  private refreshMatches(): void {
-    this.http.get<ApiMatch[]>(MATCHES_API_URL).pipe(
-      map((matches) => matches.map((match) => this.fromApiMatch(match))),
-      catchError(() => of(this.matchesSubject.value))
-    ).subscribe((matches) => this.matchesSubject.next(matches));
   }
 
   private patchLocalMatch(updatedMatch: MatchRequest): void {

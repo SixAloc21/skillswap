@@ -44,3 +44,37 @@ Ejemplo:
 ```text
 http://localhost:8080/api/skills/search?q=ingles&category=Idiomas&modality=ONLINE&level=INTERMEDIO
 ```
+
+## Busqueda predictiva
+
+SkillSwap incluye busqueda tolerante a errores pequenos de escritura mediante `fuzziness: AUTO` de Elasticsearch.
+
+Ejemplos:
+
+```text
+fotgrafia -> Fotografia de producto con celular
+ingl -> Ingles conversacional para entrevistas
+matemticas -> Matematicas para regularizacion
+```
+
+Endpoint de sugerencias:
+
+```text
+GET /api/skills/suggestions?q=fotgrafia
+```
+
+Respuesta esperada:
+
+```json
+[
+  {
+    "skillId": "skill-phone-photography",
+    "title": "Fotografia de producto con celular",
+    "category": "Fotografia"
+  }
+]
+```
+
+En Angular, la pagina `/explorar` consulta este endpoint mientras el usuario escribe y muestra una caja de sugerencias debajo del buscador.
+
+Si Elasticsearch no esta disponible, el backend usa un modo de respaldo en memoria con comparacion aproximada para que la demostracion no falle.

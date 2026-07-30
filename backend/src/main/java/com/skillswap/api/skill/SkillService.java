@@ -1,12 +1,14 @@
 package com.skillswap.api.skill;
 
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -81,6 +83,8 @@ public class SkillService {
                         bool.must(clause -> clause.multiMatch(multiMatch -> multiMatch
                                 .query(normalizedQuery)
                                 .fields("title", "description", "fullDescription", "category", "userName")
+                                .fuzziness("AUTO")
+                                .prefixLength(1)
                         ));
                     }
 
@@ -109,6 +113,39 @@ public class SkillService {
                     .toList();
         } catch (RuntimeException exception) {
             return searchFallback(normalizedQuery, category, modality, level);
+        }
+    }
+
+    public List<SkillSuggestion> suggestions(String query) {
+        String normalizedQuery = normalize(query);
+
+        if (normalizedQuery.length() < 2) {
+            return List.of();
+        }
+
+        NativeQuery elasticsearchQuery = NativeQuery.builder()
+                .withQuery(builder -> builder.multiMatch(multiMatch -> multiMatch
+                        .query(normalizedQuery)
+                        .fields("title^3", "description", "fullDescription", "category")
+                        .fuzziness("AUTO")
+                        .prefixLength(1)
+                ))
+                .withPageable(PageRequest.of(0, 6))
+                .build();
+
+        try {
+            ensureElasticsearchSeeded();
+
+            List<SkillSuggestion> suggestions = elasticsearchOperations.search(elasticsearchQuery, SkillDocument.class)
+                    .stream()
+                    .map(SearchHit::getContent)
+                    .map(this::toSuggestion)
+                    .distinct()
+                    .toList();
+
+            return suggestions.isEmpty() ? suggestionsFallback(normalizedQuery) : suggestions;
+        } catch (RuntimeException exception) {
+            return suggestionsFallback(normalizedQuery);
         }
     }
 
@@ -183,12 +220,83 @@ public class SkillService {
 
     private List<SkillDocument> searchFallback(String normalizedQuery, String category, SkillModality modality, SkillLevel level) {
         return fallbackSkills.values().stream()
-                .filter(skill -> normalizedQuery.isBlank() || searchableText(skill).contains(normalizedQuery))
+                .filter(skill -> normalizedQuery.isBlank() || matchesPredictiveQuery(skill, normalizedQuery))
                 .filter(skill -> category == null || category.isBlank() || skill.getCategory().equalsIgnoreCase(category))
                 .filter(skill -> modality == null || skill.getModality() == modality)
                 .filter(skill -> level == null || skill.getLevel() == level)
                 .sorted(skillComparator())
                 .toList();
+    }
+
+    private List<SkillSuggestion> suggestionsFallback(String normalizedQuery) {
+        return fallbackSkills.values().stream()
+                .filter(skill -> matchesPredictiveQuery(skill, normalizedQuery))
+                .sorted(skillComparator())
+                .limit(6)
+                .map(this::toSuggestion)
+                .toList();
+    }
+
+    private SkillSuggestion toSuggestion(SkillDocument skill) {
+        return new SkillSuggestion(skill.getId(), skill.getTitle(), skill.getCategory());
+    }
+
+    private boolean matchesPredictiveQuery(SkillDocument skill, String normalizedQuery) {
+        String searchableText = searchableText(skill);
+
+        if (searchableText.contains(normalizedQuery)) {
+            return true;
+        }
+
+        return searchableWords(skill).stream()
+                .anyMatch(word -> word.startsWith(normalizedQuery) || levenshteinDistance(word, normalizedQuery) <= allowedDistance(normalizedQuery));
+    }
+
+    private List<String> searchableWords(SkillDocument skill) {
+        List<String> words = new ArrayList<>();
+
+        for (String word : searchableText(skill).split("\\s+")) {
+            if (word.length() >= 3) {
+                words.add(word);
+            }
+        }
+
+        return words;
+    }
+
+    private int allowedDistance(String query) {
+        if (query.length() <= 4) {
+            return 1;
+        }
+
+        return 2;
+    }
+
+    private int levenshteinDistance(String left, String right) {
+        int[] previous = new int[right.length() + 1];
+        int[] current = new int[right.length() + 1];
+
+        for (int index = 0; index <= right.length(); index++) {
+            previous[index] = index;
+        }
+
+        for (int leftIndex = 1; leftIndex <= left.length(); leftIndex++) {
+            current[0] = leftIndex;
+
+            for (int rightIndex = 1; rightIndex <= right.length(); rightIndex++) {
+                int cost = left.charAt(leftIndex - 1) == right.charAt(rightIndex - 1) ? 0 : 1;
+                current[rightIndex] = Math.min(
+                        Math.min(current[rightIndex - 1] + 1, previous[rightIndex] + 1),
+                        previous[rightIndex - 1] + cost
+                );
+            }
+
+            int[] swap = previous;
+            previous = current;
+            current = swap;
+        }
+
+        return previous[right.length()];
     }
 
     private String searchableText(SkillDocument skill) {

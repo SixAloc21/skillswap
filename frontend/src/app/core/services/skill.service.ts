@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
-import { CategorySummary, Skill, SkillSearchFilters } from '../models/skill.model';
+import { CategorySummary, Skill, SkillSearchFilters, SkillSuggestion } from '../models/skill.model';
 
 const API_URL = 'http://localhost:8080/api/skills';
 
@@ -114,6 +114,17 @@ export class SkillService {
       map((skills) => skills.map((skill) => this.fromApiSkill(skill))),
       catchError(() => of(this.filterSkills(this.skillsSubject.value, filters)))
     );
+  }
+
+  getSuggestions(query: string): Observable<SkillSuggestion[]> {
+    const trimmedQuery = query.trim();
+
+    if (trimmedQuery.length < 2) {
+      return of([]);
+    }
+
+    const params = new HttpParams().set('q', trimmedQuery);
+    return this.http.get<SkillSuggestion[]>(`${API_URL}/suggestions`, { params }).pipe(catchError(() => of([])));
   }
 
   filterSkills(skills: Skill[], filters: SkillSearchFilters): Skill[] {

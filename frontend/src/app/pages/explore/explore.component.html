@@ -6,14 +6,27 @@
   </div>
 
   <div class="filters-panel surface-card">
-    <label>
+    <label class="search-field">
       <span>Buscar</span>
       <input
         type="text"
         [(ngModel)]="filters.query"
-        (input)="onFiltersChange()"
+        (input)="onSearchInput()"
+        (focus)="loadSuggestions()"
+        (blur)="hideSuggestions()"
         placeholder="Ej. fotografia, ingles, matematicas"
+        autocomplete="off"
       />
+      <div class="suggestions-panel" *ngIf="showSuggestions">
+        <button
+          type="button"
+          *ngFor="let suggestion of suggestions"
+          (mousedown)="selectSuggestion(suggestion)"
+        >
+          <strong>{{ suggestion.title }}</strong>
+          <span>{{ suggestion.category }}</span>
+        </button>
+      </div>
     </label>
 
     <label>
@@ -47,7 +60,7 @@
 
   <div class="results-toolbar">
     <span class="pill">{{ filteredSkills.length }} resultados</span>
-    <span class="results-toolbar__hint">Cada cambio en los filtros actualiza las tarjetas mostradas.</span>
+    <span class="results-toolbar__hint">El buscador acepta sugerencias predictivas y errores pequenos de escritura.</span>
   </div>
 
   <div *ngIf="statusMessage" class="status-message status-message--success">
