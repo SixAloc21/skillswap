@@ -2,7 +2,7 @@
   <div class="section-heading">
     <span class="section-heading__eyebrow">Explorar</span>
     <h1>Buscador de habilidades</h1>
-    <p>Filtra por texto, categoria, modalidad y nivel para actualizar el DOM en tiempo real sin recargar la pagina.</p>
+    <p>Encuentra habilidades por nombre, descripcion, categoria, modalidad o nivel.</p>
   </div>
 
   <div class="filters-panel surface-card">
@@ -60,7 +60,7 @@
 
   <div class="results-toolbar">
     <span class="pill">{{ filteredSkills.length }} resultados</span>
-    <span class="results-toolbar__hint">El buscador acepta sugerencias predictivas y errores pequenos de escritura.</span>
+    <span class="results-toolbar__hint">{{ searchEngineLabel }}</span>
   </div>
 
   <div *ngIf="statusMessage" class="status-message status-message--success">

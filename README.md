@@ -12,11 +12,12 @@ SkillSwap es una plataforma web academica para encontrar, publicar e intercambia
 - Spring Data Elasticsearch
 - Elasticsearch
 - Docker Compose
+- Kotlin y Jetpack Compose para Wear OS
 
 ## Funcionalidades principales
 
 - Landing page moderna con hero, beneficios, categorias y banner digital.
-- Navbar responsive con acceso a Inicio, Explorar, Publicar, Matches, Perfil y Wearable.
+- Navbar responsive con acceso a Inicio, Explorar, Publicar, Matches, Perfil y Contacto.
 - Menu hamburguesa colapsable para navegacion movil.
 - Buscador funcional por texto y descripcion.
 - Busqueda predictiva con sugerencias y tolerancia a errores de escritura.
@@ -26,7 +27,9 @@ SkillSwap es una plataforma web academica para encontrar, publicar e intercambia
 - Formulario de publicacion con validaciones y guardado mediante API Spring Boot.
 - Pagina de Matches con estados pendientes, aceptados y rechazados.
 - Perfil tipo dashboard con estadisticas y habilidades publicadas.
-- Demo wearable para justificar adaptacion a dispositivos inteligentes.
+- Integracion con app Wear OS para recibir y responder solicitudes desde emulador.
+- Acceso Wear OS protegido por PIN y cierre de sesion.
+- Notificaciones locales de nuevas ofertas sin Firebase.
 - Pagina de contacto con datos, redes sociales, mapa simulado y formulario conectado al backend.
 - Paginas complementarias de privacidad, acerca de y ayuda.
 - Backend Spring Boot con API REST.
@@ -83,6 +86,8 @@ docs/
 docker-compose.elasticsearch.yml
 ```
 
+La app del reloj se desarrolla actualmente en `C:\Users\nunez\AndroidStudioProjects\SkillSwapWear`. Antes de entregar el codigo por Git debe publicarse en un repositorio propio o incorporarse a este repositorio sin archivos locales ni carpetas de build.
+
 ## Rutas principales
 
 - `/`
@@ -91,7 +96,6 @@ docker-compose.elasticsearch.yml
 - `/publicar`
 - `/matches`
 - `/perfil`
-- `/wearable`
 - `/contacto`
 - `/privacidad`
 - `/acerca-de`
@@ -106,7 +110,7 @@ docker-compose.elasticsearch.yml
 - Formulario de publicacion con validaciones visibles.
 - Estado actualizado de una tarjeta en `Matches`.
 - Dashboard del perfil.
-- Vista del smartwatch en `Wearable`.
+- App Wear OS recibiendo una solicitud desde el backend.
 - Formulario de contacto enviado correctamente.
 - Footer con datos de contacto, redes y paginas complementarias.
 
@@ -123,3 +127,7 @@ docker-compose.elasticsearch.yml
 - [docs/integracion-wearable.md](docs/integracion-wearable.md)
 - [docs/reporte-lighthouse.md](docs/reporte-lighthouse.md)
 - [docs/elementos-sitio-web.md](docs/elementos-sitio-web.md)
+- [docs/despliegue.md](docs/despliegue.md)
+- [docs/cumplimiento-practicas.md](docs/cumplimiento-practicas.md)
+- [docs/seguridad-wearable.md](docs/seguridad-wearable.md)
+- [docs/actualizaciones-estables.md](docs/actualizaciones-estables.md)

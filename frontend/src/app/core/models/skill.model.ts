@@ -31,6 +31,12 @@ export interface SkillSuggestion {
   category: string;
 }
 
+export interface SearchStatus {
+  engine: string;
+  elasticsearchAvailable: boolean;
+  indexName: string;
+}
+
 export interface CategorySummary {
   name: string;
   count: number;

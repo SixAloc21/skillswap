@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { ContactRequest, ContactResponse } from '../models/contact.model';
 
-const CONTACT_API_URL = 'http://localhost:8080/api/contact';
+const CONTACT_API_URL = `${environment.apiBaseUrl}/api/contact`;
 
 @Injectable({
   providedIn: 'root'

@@ -21,7 +21,6 @@ export class NavbarComponent {
     { label: 'Publicar', path: '/publicar' },
     { label: 'Matches', path: '/matches' },
     { label: 'Perfil', path: '/perfil' },
-    { label: 'Wearable', path: '/wearable' },
     { label: 'Contacto', path: '/contacto' }
   ];
 

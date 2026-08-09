@@ -46,6 +46,11 @@ public class SkillController {
         return skillService.suggestions(q);
     }
 
+    @GetMapping("/search-status")
+    public SearchStatus searchStatus() {
+        return skillService.searchStatus();
+    }
+
     @PostMapping
     public SkillDocument create(@Valid @RequestBody SkillRequest request) {
         return skillService.create(request);

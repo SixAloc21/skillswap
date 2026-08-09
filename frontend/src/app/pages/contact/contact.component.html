@@ -40,7 +40,7 @@
       </label>
 
       <div class="status-message status-message--info contact-form__full" *ngIf="showErrorMessage">
-        No se pudo enviar el mensaje. Verifica que el backend este encendido en localhost:8080.
+        No se pudo enviar el mensaje. Intentalo nuevamente en unos minutos.
       </div>
 
       <button type="submit" class="btn btn--primary contact-form__full" [disabled]="isSubmitting">
@@ -68,7 +68,7 @@
         </div>
       </article>
 
-      <article class="surface-card contact-map" aria-label="Mapa de ubicacion simulado">
+      <article class="surface-card contact-map" aria-label="Mapa de ubicacion">
         <div class="contact-map__pin"></div>
         <div>
           <strong>Mapa de ubicacion</strong>
@@ -82,7 +82,7 @@
 <app-modal
   *ngIf="showSuccessModal"
   title="Mensaje enviado"
-  description="Tu mensaje quedo registrado en la API de contacto de SkillSwap."
+  description="Gracias por escribirnos. Revisaremos tu mensaje lo antes posible."
   confirmLabel="Entendido"
   cancelLabel="Cerrar"
   (confirm)="closeSuccessModal()"

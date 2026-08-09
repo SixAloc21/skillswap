@@ -37,6 +37,7 @@ export class ExploreComponent implements OnInit {
   selectedSkill: Skill | null = null;
   showRequestModal = false;
   statusMessage = '';
+  searchEngineLabel = 'Busqueda lista';
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -69,6 +70,15 @@ export class ExploreComponent implements OnInit {
 
       this.applyFilters();
     });
+
+    this.skillService
+      .getSearchStatus()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((status) => {
+        this.searchEngineLabel = status.elasticsearchAvailable
+          ? 'Busqueda avanzada activa'
+          : 'Busqueda en modo respaldo';
+      });
   }
 
   onSearchInput(): void {

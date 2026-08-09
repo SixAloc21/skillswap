@@ -15,10 +15,6 @@ public class MatchService {
 
     private final Map<String, MatchResponse> matches = new ConcurrentHashMap<>();
 
-    public MatchService() {
-        seed();
-    }
-
     public List<MatchResponse> findAll() {
         return matches.values().stream()
                 .sorted(Comparator.comparing(MatchResponse::createdAt).reversed())
@@ -78,9 +74,4 @@ public class MatchService {
         return updated;
     }
 
-    private void seed() {
-        create(new MatchRequest("Camila Ruiz", "Recruiter bilingue y coach de speaking", "Maria Torres", "Ingles conversacional para entrevistas", "Mentoria de UX con Figma", "Online", "Martes por la noche", "Puedo ayudarte a practicar entrevistas en ingles y me encantaria recibir feedback sobre mi portafolio."));
-        MatchResponse accepted = create(new MatchRequest("Paola Neri", "Fotografa comercial y creadora de contenido", "Maria Torres", "Fotografia de producto con celular", "Mentoria de UX con Figma", "Hibrido", "Sabados despues de las 3 pm", "Busco mejorar la presentacion de mi portafolio para clientes digitales."));
-        updateStatus(accepted.id(), MatchStatus.ACEPTADO);
-    }
 }

@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { CURRENT_USER } from '../data/mock-users';
 import { MatchRequest, MatchStatus } from '../models/match-request.model';
 import { Skill } from '../models/skill.model';
 
-const MATCHES_API_URL = 'http://localhost:8080/api/matches';
-const WEARABLE_API_URL = 'http://localhost:8080/api/wearable/notifications';
+const MATCHES_API_URL = `${environment.apiBaseUrl}/api/matches`;
 
 type ApiMatchStatus = 'PENDIENTE' | 'ACEPTADO' | 'RECHAZADO' | 'VER_DESPUES';
 
@@ -61,20 +61,6 @@ export class MatchService {
 
   markForLater(id: string): Observable<MatchRequest> {
     return this.updateStatus(id, 'later');
-  }
-
-  getWearableNotifications(): Observable<MatchRequest[]> {
-    return this.http.get<ApiMatch[]>(WEARABLE_API_URL).pipe(
-      map((matches) => matches.map((match) => this.fromApiMatch(match))),
-      catchError(() => of([]))
-    );
-  }
-
-  updateWearableNotification(id: string, action: 'accept' | 'reject' | 'later'): Observable<MatchRequest> {
-    return this.http.patch<ApiMatch>(`${WEARABLE_API_URL}/${id}/${action}`, {}).pipe(
-      map((match) => this.fromApiMatch(match)),
-      tap((match) => this.patchLocalMatch(match))
-    );
   }
 
   refreshMatches(): void {

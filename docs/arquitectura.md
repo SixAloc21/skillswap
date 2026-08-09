@@ -27,13 +27,15 @@ docs/
 docker-compose.elasticsearch.yml
 ```
 
+La app Wear OS se mantiene como proyecto Android Studio separado en `C:\Users\nunez\AndroidStudioProjects\SkillSwapWear` y consume la misma API REST.
+
 ## Frontend Angular
 
 - `NavbarComponent`: navegacion principal y menu movil.
 - `SkillCardComponent`: tarjeta reutilizable para habilidades.
 - `ModalComponent`: confirmaciones y mensajes emergentes.
 - `PromoBannerComponent`: banner digital que puede mostrarse u ocultarse.
-- Paginas: Home, Explorar, Detalle, Publicar, Matches, Perfil, Wearable, Contacto, Privacidad, Acerca de, Ayuda y Not Found.
+- Paginas: Home, Explorar, Detalle, Publicar, Matches, Perfil, Contacto, Privacidad, Acerca de, Ayuda y Not Found.
 
 ## Backend Spring Boot
 
@@ -42,10 +44,18 @@ docker-compose.elasticsearch.yml
 - `WearableController`: entrega notificaciones compactas para smartwatch.
 - `ContactController`: recibe mensajes de contacto.
 
+## Wear OS
+
+- Jetpack Compose Material 3 dibuja la interfaz circular.
+- `PinAuthenticator` protege la pantalla principal con PIN.
+- `OfferPollingService` consulta localmente las solicitudes cada 10 segundos.
+- `OfferNotificationManager` genera y deduplica notificaciones nativas.
+- Retrofit consume los endpoints del `WearableController`.
+
 ## Servicios
 
 - Frontend `SkillService`: consume `GET/POST /api/skills` y `GET /api/skills/search`.
-- Frontend `MatchService`: consume `/api/matches` y `/api/wearable/notifications`.
+- Frontend `MatchService`: consume `/api/matches` para mostrar y actualizar solicitudes.
 - Frontend `ContactService`: consume `POST /api/contact`.
 - Backend `SkillService`: indexa y busca habilidades en Elasticsearch, con respaldo en memoria para demos.
 - Backend `MatchService`: mantiene solicitudes en memoria durante la ejecucion.

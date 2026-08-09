@@ -19,3 +19,12 @@ Las siguientes pruebas validan el comportamiento esperado de la pagina `Explorar
 - Las tarjetas cambian en tiempo real gracias a la consulta del frontend hacia Spring Boot.
 - Elasticsearch usa busqueda aproximada con `fuzziness: AUTO` para tolerar errores pequenos.
 - El mensaje sin resultados se muestra con `*ngIf`.
+
+## Pruebas automatizadas
+
+`SkillService` incluye tres pruebas unitarias ejecutables que validan busqueda por texto, combinacion de filtros y caso sin resultados:
+
+```powershell
+cd frontend
+npm test -- --watch=false --browsers=ChromeHeadless
+```

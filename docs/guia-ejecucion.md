@@ -56,7 +56,6 @@ http://localhost:4200
 - `/publicar`
 - `/matches`
 - `/perfil`
-- `/wearable`
 - `/contacto`
 - `/privacidad`
 - `/acerca-de`
@@ -72,6 +71,6 @@ http://localhost:4200
 6. Publicacion exitosa visible en Explorar.
 7. Cambio visual de estado en Matches.
 8. Dashboard del perfil.
-9. Simulacion wearable consumiendo `/api/wearable/notifications`.
+9. App Wear OS consumiendo `/api/wearable/notifications`.
 10. Formulario de contacto enviando datos a `/api/contact`.
 11. Footer con redes sociales, datos de contacto y paginas complementarias.

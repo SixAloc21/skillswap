@@ -10,7 +10,6 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { PrivacyComponent } from './pages/privacy/privacy.component';
 import { PublishSkillComponent } from './pages/publish-skill/publish-skill.component';
 import { SkillDetailComponent } from './pages/skill-detail/skill-detail.component';
-import { WearableDemoComponent } from './pages/wearable-demo/wearable-demo.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'SkillSwap | Inicio' },
@@ -19,7 +18,6 @@ export const routes: Routes = [
   { path: 'publicar', component: PublishSkillComponent, title: 'SkillSwap | Publicar habilidad' },
   { path: 'matches', component: MatchesComponent, title: 'SkillSwap | Matches' },
   { path: 'perfil', component: ProfileComponent, title: 'SkillSwap | Perfil' },
-  { path: 'wearable', component: WearableDemoComponent, title: 'SkillSwap | Wearable demo' },
   { path: 'contacto', component: ContactComponent, title: 'SkillSwap | Contacto' },
   { path: 'privacidad', component: PrivacyComponent, title: 'SkillSwap | Privacidad' },
   { path: 'acerca-de', component: AboutComponent, title: 'SkillSwap | Acerca de' },

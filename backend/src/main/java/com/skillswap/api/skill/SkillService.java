@@ -149,6 +149,15 @@ public class SkillService {
         }
     }
 
+    public SearchStatus searchStatus() {
+        try {
+            ensureElasticsearchSeeded();
+            return new SearchStatus("Busqueda avanzada", true, "skillswap-skills");
+        } catch (RuntimeException exception) {
+            return new SearchStatus("Modo respaldo", false, "skillswap-skills");
+        }
+    }
+
     public SkillDocument create(SkillRequest request) {
         SkillDocument skill = new SkillDocument(
                 slug(request.title()) + "-" + UUID.randomUUID(),

@@ -46,7 +46,7 @@
   <div class="section-heading">
     <span class="section-heading__eyebrow">Beneficios</span>
     <h2>Una plataforma pensada para aprender practicando</h2>
-    <p>El proyecto muestra contenido dinamico, navegacion clara y componentes reutilizables listos para presentar.</p>
+    <p>Encuentra personas con intereses compatibles y convierte lo que sabes en nuevas oportunidades de aprendizaje.</p>
   </div>
 
   <div class="benefits-grid">
@@ -55,12 +55,12 @@
       <p>Encuentra habilidades por texto, categoria, modalidad y nivel sin recargar la pagina.</p>
     </article>
     <article class="surface-card benefit-card">
-      <h3>Backend conectado</h3>
-      <p>Las publicaciones y solicitudes se procesan con Spring Boot y busqueda indexada con Elasticsearch.</p>
+      <h3>Intercambios organizados</h3>
+      <p>Publica lo que sabes, solicita lo que quieres aprender y da seguimiento a tus acuerdos.</p>
     </article>
     <article class="surface-card benefit-card">
-      <h3>Experiencia adaptable</h3>
-      <p>El diseno responde a escritorio, movil y una vista compacta orientada a wearables.</p>
+      <h3>Experiencia flexible</h3>
+      <p>Usa SkillSwap desde escritorio, movil o una vista compacta para revisar solicitudes rapidas.</p>
     </article>
   </div>
 </section>
@@ -93,7 +93,7 @@
   <div class="section-heading">
     <span class="section-heading__eyebrow">Habilidades destacadas</span>
     <h2>Intercambios listos para iniciar</h2>
-    <p>Tarjetas dinamicas renderizadas con datos entregados por la API y preparadas para navegar a su detalle o solicitar intercambio.</p>
+    <p>Explora publicaciones activas y envia una solicitud cuando encuentres una habilidad que te interese.</p>
   </div>
 
   <div class="skills-grid" *ngIf="featuredSkills$ | async as featuredSkills">
@@ -119,7 +119,7 @@
 <app-modal
   *ngIf="showWelcomeModal"
   title="Bienvenido a SkillSwap"
-  description="Explora habilidades, publica lo que sabes hacer y demuestra el uso de contenido dinamico, filtros, formularios y adaptacion responsive dentro del proyecto."
+  description="Explora habilidades, publica lo que sabes hacer y encuentra personas con quienes aprender de forma colaborativa."
   confirmLabel="Explorar ahora"
   cancelLabel="Cerrar"
   (confirm)="startExploring()"
