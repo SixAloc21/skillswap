@@ -56,6 +56,12 @@ No se necesita cambiar codigo para activar Elasticsearch remoto; solo variables 
 
 ## Frontend en Vercel
 
+URL de produccion:
+
+```text
+https://frontend-six-taupe-c8r0pelv2y.vercel.app
+```
+
 La URL publica del backend se configura en:
 
 ```text
