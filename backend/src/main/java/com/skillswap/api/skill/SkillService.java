@@ -60,11 +60,18 @@ public class SkillService {
         NativeQuery elasticsearchQuery = NativeQuery.builder()
                 .withQuery(builder -> builder.bool(bool -> {
                     if (!normalizedQuery.isBlank()) {
-                        bool.must(clause -> clause.multiMatch(multiMatch -> multiMatch
-                                .query(normalizedQuery)
-                                .fields("title", "description", "fullDescription", "category", "userName")
-                                .fuzziness("AUTO")
-                                .prefixLength(1)
+                        bool.must(clause -> clause.bool(text -> text
+                                .should(candidate -> candidate.multiMatch(multiMatch -> multiMatch
+                                        .query(normalizedQuery)
+                                        .fields("title", "description", "fullDescription", "category", "userName")
+                                        .fuzziness("AUTO")
+                                        .prefixLength(1)
+                                ))
+                                .should(candidate -> candidate.matchPhrasePrefix(prefix -> prefix
+                                        .field("title")
+                                        .query(normalizedQuery)
+                                ))
+                                .minimumShouldMatch("1")
                         ));
                     }
 
@@ -101,11 +108,18 @@ public class SkillService {
         }
 
         NativeQuery elasticsearchQuery = NativeQuery.builder()
-                .withQuery(builder -> builder.multiMatch(multiMatch -> multiMatch
-                        .query(normalizedQuery)
-                        .fields("title^3", "description", "fullDescription", "category")
-                        .fuzziness("AUTO")
-                        .prefixLength(1)
+                .withQuery(builder -> builder.bool(bool -> bool
+                        .should(candidate -> candidate.multiMatch(multiMatch -> multiMatch
+                                .query(normalizedQuery)
+                                .fields("title^3", "description", "fullDescription", "category")
+                                .fuzziness("AUTO")
+                                .prefixLength(1)
+                        ))
+                        .should(candidate -> candidate.matchPhrasePrefix(prefix -> prefix
+                                .field("title")
+                                .query(normalizedQuery)
+                        ))
+                        .minimumShouldMatch("1")
                 ))
                 .withPageable(PageRequest.of(0, 6))
                 .build();
