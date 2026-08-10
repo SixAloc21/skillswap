@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://REEMPLAZA-CON-TU-BACKEND.onrender.com'
+  apiBaseUrl: 'https://skillswap-api-e7y8.onrender.com'
 };

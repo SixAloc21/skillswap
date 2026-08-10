@@ -54,9 +54,9 @@ ELASTICSEARCH_PASSWORD=tu-password
 
 No se necesita cambiar codigo para activar Elasticsearch remoto; solo variables de entorno.
 
-## Frontend en Vercel o Netlify
+## Frontend en Vercel
 
-Antes de desplegar frontend, cambiar:
+La URL publica del backend se configura en:
 
 ```text
 frontend/src/environments/environment.prod.ts
@@ -67,11 +67,11 @@ Ejemplo:
 ```ts
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://tu-backend.onrender.com'
+  apiBaseUrl: 'https://skillswap-api-e7y8.onrender.com'
 };
 ```
 
-Luego desplegar usando:
+Desplegar usando:
 
 ```text
 Root Directory: frontend
