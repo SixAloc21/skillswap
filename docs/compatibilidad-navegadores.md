@@ -46,7 +46,7 @@ La app Wear OS consulta solicitudes pendientes cada 10 segundos. Cuando detecta 
 
 ## Rendimiento
 
-- La busqueda usa el backend de SkillSwap y puede trabajar con Elasticsearch o modo respaldo.
+- La busqueda usa el backend de SkillSwap y Elastic Cloud; el navegador nunca se conecta directamente al indice.
 - Las actualizaciones visuales ocurren sin recarga de pagina.
 - La cantidad de datos iniciales indexados se mantiene razonable para una demo escolar fluida.
 - Las grillas se reducen a una columna en pantallas pequenas y las imagenes no exceden el ancho disponible.

@@ -14,20 +14,17 @@ Backend Spring Boot para SkillSwap.
 ## Requisitos
 
 - Java 17 o superior.
-- Docker Desktop para levantar Elasticsearch.
+- Un despliegue de Elastic Cloud y una API key de Elasticsearch.
 - No necesitas Maven instalado: el proyecto incluye Maven Wrapper.
 
-## Levantar Elasticsearch
+## Configurar Elastic Cloud
 
-Desde `C:\SkillSwap`:
-
-```bash
-docker compose -f docker-compose.elasticsearch.yml up -d
+```powershell
+$env:ELASTICSEARCH_URIS='https://tu-endpoint.es.region.aws.elastic-cloud.com'
+$env:ELASTICSEARCH_API_KEY='tu-api-key-de-elasticsearch'
 ```
 
-Si Docker Desktop no esta abierto o Elasticsearch no esta disponible, el backend aun puede iniciar con datos locales de respaldo. Cuando Elasticsearch este activo, la busqueda usa el indice `skillswap-skills`.
-
-Si el backend arranca antes que Elasticsearch, el servicio intenta crear y llenar el indice automaticamente en la siguiente consulta.
+El backend usa exclusivamente el indice `skillswap-skills` de Elastic Cloud. Si las variables faltan o el servicio no esta disponible, las consultas fallan en vez de usar datos locales.
 
 ## Ejecutar backend
 

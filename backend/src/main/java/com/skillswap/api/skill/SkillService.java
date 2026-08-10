@@ -8,11 +8,8 @@ import org.springframework.data.elasticsearch.core.IndexOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 
 import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -21,7 +18,6 @@ import java.util.UUID;
 public class SkillService {
 
     private final ElasticsearchOperations elasticsearchOperations;
-    private final Map<String, SkillDocument> fallbackSkills = new LinkedHashMap<>();
     private boolean elasticsearchSeeded;
 
     public SkillService(ElasticsearchOperations elasticsearchOperations) {
@@ -33,41 +29,24 @@ public class SkillService {
                 .withQuery(builder -> builder.matchAll(matchAll -> matchAll))
                 .build();
 
-        try {
-            ensureElasticsearchSeeded();
+        ensureElasticsearchSeeded();
 
-            return elasticsearchOperations.search(query, SkillDocument.class)
-                    .stream()
-                    .map(SearchHit::getContent)
-                    .sorted(skillComparator())
-                    .toList();
-        } catch (RuntimeException exception) {
-            return fallbackSkills.values().stream()
-                    .sorted(skillComparator())
-                    .toList();
-        }
+        return elasticsearchOperations.search(query, SkillDocument.class)
+                .stream()
+                .map(SearchHit::getContent)
+                .sorted(skillComparator())
+                .toList();
     }
 
     public SkillDocument findById(String id) {
-        try {
-            ensureElasticsearchSeeded();
+        ensureElasticsearchSeeded();
+        SkillDocument skill = elasticsearchOperations.get(id, SkillDocument.class);
 
-            SkillDocument skill = elasticsearchOperations.get(id, SkillDocument.class);
-
-            if (skill != null) {
-                return skill;
-            }
-        } catch (RuntimeException ignored) {
-            // When Elasticsearch is offline, the local fallback keeps the API usable for class demos.
-        }
-
-        SkillDocument fallbackSkill = fallbackSkills.get(id);
-
-        if (fallbackSkill == null) {
+        if (skill == null) {
             throw new NoSuchElementException("No existe la habilidad con id " + id);
         }
 
-        return fallbackSkill;
+        return skill;
     }
 
     public List<SkillDocument> search(String query, String category, SkillModality modality, SkillLevel level) {
@@ -104,16 +83,12 @@ public class SkillService {
                 }))
                 .build();
 
-        try {
-            ensureElasticsearchSeeded();
+        ensureElasticsearchSeeded();
 
-            return elasticsearchOperations.search(elasticsearchQuery, SkillDocument.class)
-                    .stream()
-                    .map(SearchHit::getContent)
-                    .toList();
-        } catch (RuntimeException exception) {
-            return searchFallback(normalizedQuery, category, modality, level);
-        }
+        return elasticsearchOperations.search(elasticsearchQuery, SkillDocument.class)
+                .stream()
+                .map(SearchHit::getContent)
+                .toList();
     }
 
     public List<SkillSuggestion> suggestions(String query) {
@@ -133,29 +108,19 @@ public class SkillService {
                 .withPageable(PageRequest.of(0, 6))
                 .build();
 
-        try {
-            ensureElasticsearchSeeded();
+        ensureElasticsearchSeeded();
 
-            List<SkillSuggestion> suggestions = elasticsearchOperations.search(elasticsearchQuery, SkillDocument.class)
-                    .stream()
-                    .map(SearchHit::getContent)
-                    .map(this::toSuggestion)
-                    .distinct()
-                    .toList();
-
-            return suggestions.isEmpty() ? suggestionsFallback(normalizedQuery) : suggestions;
-        } catch (RuntimeException exception) {
-            return suggestionsFallback(normalizedQuery);
-        }
+        return elasticsearchOperations.search(elasticsearchQuery, SkillDocument.class)
+                .stream()
+                .map(SearchHit::getContent)
+                .map(this::toSuggestion)
+                .distinct()
+                .toList();
     }
 
     public SearchStatus searchStatus() {
-        try {
-            ensureElasticsearchSeeded();
-            return new SearchStatus("Busqueda avanzada", true, "skillswap-skills");
-        } catch (RuntimeException exception) {
-            return new SearchStatus("Modo respaldo", false, "skillswap-skills");
-        }
+        ensureElasticsearchSeeded();
+        return new SearchStatus("Elastic Cloud", true, "skillswap-skills");
     }
 
     public SkillDocument create(SkillRequest request) {
@@ -175,35 +140,15 @@ public class SkillService {
                 false
         );
 
-        fallbackSkills.put(skill.getId(), skill);
-
-        try {
-            ensureElasticsearchSeeded();
-            return elasticsearchOperations.save(skill);
-        } catch (RuntimeException exception) {
-            return skill;
-        }
+        ensureElasticsearchSeeded();
+        return elasticsearchOperations.save(skill);
     }
 
     public void seedIfEmpty() {
-        if (!fallbackSkills.isEmpty()) {
-            return;
-        }
-
-        SkillSeedData.initialSkills().forEach(skill -> fallbackSkills.put(skill.getId(), skill));
-
-        try {
-            ensureElasticsearchSeeded();
-        } catch (RuntimeException ignored) {
-            // Elasticsearch can be started later; the API still serves fallback data meanwhile.
-        }
+        ensureElasticsearchSeeded();
     }
 
     private void ensureElasticsearchSeeded() {
-        if (fallbackSkills.isEmpty()) {
-            SkillSeedData.initialSkills().forEach(skill -> fallbackSkills.put(skill.getId(), skill));
-        }
-
         if (elasticsearchSeeded) {
             return;
         }
@@ -215,7 +160,7 @@ public class SkillService {
             indexOperations.putMapping();
         }
 
-        fallbackSkills.values().forEach(elasticsearchOperations::save);
+        SkillSeedData.initialSkills().forEach(elasticsearchOperations::save);
         elasticsearchSeeded = true;
     }
 
@@ -227,95 +172,8 @@ public class SkillService {
         return Comparator.comparing(SkillDocument::isFeatured).reversed().thenComparing(SkillDocument::getTitle);
     }
 
-    private List<SkillDocument> searchFallback(String normalizedQuery, String category, SkillModality modality, SkillLevel level) {
-        return fallbackSkills.values().stream()
-                .filter(skill -> normalizedQuery.isBlank() || matchesPredictiveQuery(skill, normalizedQuery))
-                .filter(skill -> category == null || category.isBlank() || skill.getCategory().equalsIgnoreCase(category))
-                .filter(skill -> modality == null || skill.getModality() == modality)
-                .filter(skill -> level == null || skill.getLevel() == level)
-                .sorted(skillComparator())
-                .toList();
-    }
-
-    private List<SkillSuggestion> suggestionsFallback(String normalizedQuery) {
-        return fallbackSkills.values().stream()
-                .filter(skill -> matchesPredictiveQuery(skill, normalizedQuery))
-                .sorted(skillComparator())
-                .limit(6)
-                .map(this::toSuggestion)
-                .toList();
-    }
-
     private SkillSuggestion toSuggestion(SkillDocument skill) {
         return new SkillSuggestion(skill.getId(), skill.getTitle(), skill.getCategory());
-    }
-
-    private boolean matchesPredictiveQuery(SkillDocument skill, String normalizedQuery) {
-        String searchableText = searchableText(skill);
-
-        if (searchableText.contains(normalizedQuery)) {
-            return true;
-        }
-
-        return searchableWords(skill).stream()
-                .anyMatch(word -> word.startsWith(normalizedQuery) || levenshteinDistance(word, normalizedQuery) <= allowedDistance(normalizedQuery));
-    }
-
-    private List<String> searchableWords(SkillDocument skill) {
-        List<String> words = new ArrayList<>();
-
-        for (String word : searchableText(skill).split("\\s+")) {
-            if (word.length() >= 3) {
-                words.add(word);
-            }
-        }
-
-        return words;
-    }
-
-    private int allowedDistance(String query) {
-        if (query.length() <= 4) {
-            return 1;
-        }
-
-        return 2;
-    }
-
-    private int levenshteinDistance(String left, String right) {
-        int[] previous = new int[right.length() + 1];
-        int[] current = new int[right.length() + 1];
-
-        for (int index = 0; index <= right.length(); index++) {
-            previous[index] = index;
-        }
-
-        for (int leftIndex = 1; leftIndex <= left.length(); leftIndex++) {
-            current[0] = leftIndex;
-
-            for (int rightIndex = 1; rightIndex <= right.length(); rightIndex++) {
-                int cost = left.charAt(leftIndex - 1) == right.charAt(rightIndex - 1) ? 0 : 1;
-                current[rightIndex] = Math.min(
-                        Math.min(current[rightIndex - 1] + 1, previous[rightIndex] + 1),
-                        previous[rightIndex - 1] + cost
-                );
-            }
-
-            int[] swap = previous;
-            previous = current;
-            current = swap;
-        }
-
-        return previous[right.length()];
-    }
-
-    private String searchableText(SkillDocument skill) {
-        return normalize(String.join(" ",
-                skill.getTitle(),
-                skill.getDescription(),
-                skill.getFullDescription(),
-                skill.getCategory(),
-                skill.getUserName()
-        ));
     }
 
     private String normalize(String value) {

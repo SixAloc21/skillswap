@@ -48,7 +48,7 @@ La app Wear OS se mantiene como proyecto Android Studio separado en `C:\Users\nu
 
 - Jetpack Compose Material 3 dibuja la interfaz circular.
 - `PinAuthenticator` protege la pantalla principal con PIN.
-- `OfferPollingService` consulta localmente las solicitudes cada 10 segundos.
+- `OfferPollingService` consulta las solicitudes por HTTPS cada 10 segundos.
 - `OfferNotificationManager` genera y deduplica notificaciones nativas.
 - Retrofit consume los endpoints del `WearableController`.
 
@@ -57,7 +57,7 @@ La app Wear OS se mantiene como proyecto Android Studio separado en `C:\Users\nu
 - Frontend `SkillService`: consume `GET/POST /api/skills` y `GET /api/skills/search`.
 - Frontend `MatchService`: consume `/api/matches` para mostrar y actualizar solicitudes.
 - Frontend `ContactService`: consume `POST /api/contact`.
-- Backend `SkillService`: indexa y busca habilidades en Elasticsearch, con respaldo en memoria para demos.
+- Backend `SkillService`: indexa y busca habilidades exclusivamente en Elastic Cloud.
 - Backend `MatchService`: mantiene solicitudes en memoria durante la ejecucion.
 
 ## Flujo de datos

@@ -1,81 +1,73 @@
-import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { Skill } from '../models/skill.model';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { environment } from '../../../environments/environment';
 import { SkillService } from './skill.service';
 
-describe('SkillService search fallback', () => {
+describe('SkillService Elasticsearch search', () => {
   let service: SkillService;
+  let httpTesting: HttpTestingController;
 
-  const skills: Skill[] = [
-    {
-      id: 'photo',
-      title: 'Fotografia con celular',
-      category: 'Fotografia',
-      description: 'Iluminacion y encuadre',
-      fullDescription: 'Curso practico de fotografia movil',
-      level: 'Intermedio',
-      modality: 'Online',
-      exchangeFor: 'Ingles',
-      availability: 'Sabado',
-      userId: 'user-ana',
-      userName: 'Ana',
-      userHeadline: 'Fotografa',
-      location: 'Puebla'
-    },
-    {
-      id: 'english',
-      title: 'Ingles conversacional',
-      category: 'Idiomas',
-      description: 'Practica para entrevistas',
-      fullDescription: 'Conversacion y vocabulario profesional',
-      level: 'Basico',
-      modality: 'Presencial',
-      exchangeFor: 'Fotografia',
-      availability: 'Viernes',
-      userId: 'user-luis',
-      userName: 'Luis',
-      userHeadline: 'Docente',
-      location: 'Queretaro'
-    }
-  ];
+  const apiSkill = {
+    id: 'photo',
+    title: 'Fotografia con celular',
+    category: 'Fotografia',
+    description: 'Iluminacion y encuadre',
+    fullDescription: 'Curso practico de fotografia movil',
+    level: 'INTERMEDIO',
+    modality: 'ONLINE',
+    exchangeFor: 'Ingles',
+    availability: 'Sabado',
+    userName: 'Ana',
+    userHeadline: 'Fotografa',
+    location: 'Puebla',
+    featured: false
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient()]
+      providers: [provideHttpClient(), provideHttpClientTesting()]
     });
     service = TestBed.inject(SkillService);
+    httpTesting = TestBed.inject(HttpTestingController);
   });
 
-  it('finds content by text without leaving the site', () => {
-    const result = service.filterSkills(skills, {
-      query: 'fotografia',
-      category: '',
-      modality: '',
-      level: ''
-    });
+  afterEach(() => httpTesting.verify());
 
-    expect(result.map((skill) => skill.id)).toEqual(['photo']);
+  it('sends text searches to the backend Elasticsearch endpoint', () => {
+    service
+      .searchSkills({ query: 'fotografia', category: '', modality: '', level: '' })
+      .subscribe((skills) => expect(skills.map((skill) => skill.id)).toEqual(['photo']));
+
+    const request = httpTesting.expectOne(
+      (candidate) => candidate.url === `${environment.apiBaseUrl}/api/skills/search`
+    );
+    expect(request.request.params.get('q')).toBe('fotografia');
+    request.flush([apiSkill]);
   });
 
-  it('combines category, modality and level filters', () => {
-    const result = service.filterSkills(skills, {
-      query: '',
-      category: 'Idiomas',
-      modality: 'Presencial',
-      level: 'Basico'
-    });
+  it('sends category, modality and level filters to Elasticsearch', () => {
+    service
+      .searchSkills({ query: '', category: 'Fotografia', modality: 'Online', level: 'Intermedio' })
+      .subscribe((skills) => expect(skills.length).toBe(1));
 
-    expect(result.map((skill) => skill.id)).toEqual(['english']);
+    const request = httpTesting.expectOne(
+      (candidate) => candidate.url === `${environment.apiBaseUrl}/api/skills/search`
+    );
+    expect(request.request.params.get('category')).toBe('Fotografia');
+    expect(request.request.params.get('modality')).toBe('ONLINE');
+    expect(request.request.params.get('level')).toBe('INTERMEDIO');
+    request.flush([apiSkill]);
   });
 
-  it('returns an empty collection when nothing matches', () => {
-    const result = service.filterSkills(skills, {
-      query: 'astrofisica marina',
-      category: '',
-      modality: '',
-      level: ''
-    });
+  it('keeps an empty Elasticsearch result empty', () => {
+    service
+      .searchSkills({ query: 'astrofisica marina', category: '', modality: '', level: '' })
+      .subscribe((skills) => expect(skills).toEqual([]));
 
-    expect(result).toEqual([]);
+    const request = httpTesting.expectOne(
+      (candidate) => candidate.url === `${environment.apiBaseUrl}/api/skills/search`
+    );
+    request.flush([]);
   });
 });

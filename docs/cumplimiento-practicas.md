@@ -5,7 +5,7 @@
 | Practica | Requisito | Estado | Evidencia o justificacion |
 | --- | --- | --- | --- |
 | 3 y 4 | Librerias, navegadores, wearable, notificaciones y rendimiento movil | Cumple | `compatibilidad-navegadores.md`, Angular, RxJS y app Wear OS |
-| 3 y 4 | Buscador interno y pruebas basicas | Cumple | Ruta `/explorar`, Elasticsearch con fallback y `pruebas-buscador.md` |
+| 3 y 4 | Buscador interno y pruebas basicas | Cumple | Ruta `/explorar`, Elastic Cloud y `pruebas-buscador.md` |
 | 3 y 4 | Documentacion y presentacion | Cumple | README y carpeta `docs/` |
 | 5 y 6 | Elementos DOM y enlace con dispositivo inteligente | Cumple | `interaccion-dom.md`, Spring Boot y endpoints wearable |
 | 5 y 6 | Widget especializado y datos transferidos | Cumple | App SkillSwap Wear y tabla de payload en `integracion-wearable.md` |
@@ -35,7 +35,7 @@ No se implemento porque el enunciado permite PIN o biometria y el emulador elegi
 
 ## Persistencia
 
-El proyecto cumple como prototipo academico, pero no como plataforma productiva con datos durables. Elasticsearch persiste habilidades cuando esta activo; matches, contactos y sesion web son simulaciones en memoria/locales. Esta limitacion esta documentada y debe explicarse durante la presentacion.
+El proyecto cumple como prototipo academico, pero no como plataforma productiva completamente durable. Elastic Cloud persiste las habilidades; matches, contactos y sesion web son simulaciones en memoria/locales. Esta limitacion esta documentada y debe explicarse durante la presentacion.
 
 ## Dictamen
 

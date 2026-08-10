@@ -16,13 +16,16 @@ Angular -> Spring Boot -> Elasticsearch
 skillswap-skills
 ```
 
-## Levantar servicio
+## Elastic Cloud
 
-```bash
-docker compose -f docker-compose.elasticsearch.yml up -d
+El backend requiere estas variables de entorno:
+
+```text
+ELASTICSEARCH_URIS=https://tu-endpoint.es.region.aws.elastic-cloud.com
+ELASTICSEARCH_API_KEY=tu-api-key-de-elasticsearch
 ```
 
-Si el backend se inicio antes que Docker, el servicio vuelve a intentar crear el indice automaticamente cuando recibe una consulta. Esto evita errores por orden de arranque durante la demostracion.
+Al recibir la primera consulta, el backend crea el indice y carga las habilidades iniciales si es necesario. La API key se configura solamente como secreto del servicio en Render.
 
 ## Busqueda
 
@@ -77,4 +80,4 @@ Respuesta esperada:
 
 En Angular, la pagina `/explorar` consulta este endpoint mientras el usuario escribe y muestra una caja de sugerencias debajo del buscador.
 
-Si Elasticsearch no esta disponible, el backend usa un modo de respaldo en memoria con comparacion aproximada para que la demostracion no falle.
+Elastic Cloud es la unica fuente del catalogo. Si no esta disponible, la operacion falla de forma visible para evitar mostrar datos distintos de los persistidos.

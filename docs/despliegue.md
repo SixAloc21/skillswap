@@ -2,17 +2,12 @@
 
 ## Estrategia actual
 
-SkillSwap puede desplegar frontend y backend sin contratar Elastic Cloud de inmediato.
+- El frontend se publica en Vercel y consume la API publica de Render.
+- El backend usa Elastic Cloud como unica fuente para habilidades y busquedas.
+- `ELASTICSEARCH_URIS` y `ELASTICSEARCH_API_KEY` son obligatorias.
+- Si Elastic Cloud no responde, la API devuelve un error; no inventa resultados locales.
 
-En ese escenario:
-
-- El frontend usa la URL publica del backend.
-- El backend arranca en Render.
-- Elasticsearch queda opcional.
-- Si no existe `ELASTICSEARCH_URIS`, el backend usa el modo respaldo en memoria.
-- El buscador sigue funcionando para la demostracion, pero el indicador mostrara `Busqueda en modo respaldo`.
-
-Esta estrategia es adecuada para una demostracion academica. No debe describirse como produccion persistente: los matches y contactos se almacenan en memoria y se pierden cuando el backend se reinicia.
+Los matches y contactos aun se almacenan en memoria y se pierden cuando el backend se reinicia. Esta limitacion debe explicarse al presentar el prototipo.
 
 ## Backend en Render
 
@@ -30,29 +25,15 @@ Health Check: /actuator/health
 Auto Deploy: cada commit
 ```
 
-Variables minimas para desplegar sin Elasticsearch remoto:
+Variables obligatorias:
 
 ```text
-SKILLSWAP_CORS_ALLOWED_ORIGINS=http://localhost:4200
-```
-
-Cuando el frontend ya tenga dominio publico, agregarlo tambien:
-
-```text
-SKILLSWAP_CORS_ALLOWED_ORIGINS=http://localhost:4200,https://tu-frontend.vercel.app
-```
-
-## Activar Elastic Cloud despues
-
-Cuando se tenga Elastic Cloud, agregar estas variables en Render:
-
-```text
+SKILLSWAP_CORS_ALLOWED_ORIGINS=http://localhost:4200,https://frontend-six-taupe-c8r0pelv2y.vercel.app
 ELASTICSEARCH_URIS=https://tu-endpoint.es.region.aws.elastic-cloud.com
-ELASTICSEARCH_USERNAME=elastic
-ELASTICSEARCH_PASSWORD=tu-password
+ELASTICSEARCH_API_KEY=tu-api-key-de-elasticsearch
 ```
 
-No se necesita cambiar codigo para activar Elasticsearch remoto; solo variables de entorno.
+La API key debe crearse para Elasticsearch desde la administracion del despliegue; no se debe usar una API key de administracion de la organizacion de Elastic Cloud. Los secretos se guardan en Render y nunca en Git.
 
 ## Frontend en Vercel
 
@@ -87,19 +68,17 @@ Output Directory: dist/skillswap/browser
 
 ## Wear OS
 
-Para pruebas locales:
+Para conectar el emulador con un backend local se puede usar:
 
 ```text
 http://10.0.2.2:8080/
 ```
 
-Para despliegue real, cambiar en la app Wear OS:
+La compilacion publicada usa directamente:
 
 ```text
-ApiConfig.BASE_URL
+https://skillswap-api-e7y8.onrender.com/
 ```
-
-por la URL publica del backend.
 
 La URL publica debe usar HTTPS. Ademas:
 

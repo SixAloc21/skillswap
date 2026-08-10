@@ -22,7 +22,7 @@ Las siguientes pruebas validan el comportamiento esperado de la pagina `Explorar
 
 ## Pruebas automatizadas
 
-`SkillService` incluye tres pruebas unitarias ejecutables que validan busqueda por texto, combinacion de filtros y caso sin resultados:
+`SkillService` incluye tres pruebas unitarias ejecutables que verifican la solicitud HTTP al backend, la combinacion de filtros y que una respuesta vacia de Elastic Cloud permanezca vacia:
 
 ```powershell
 cd frontend

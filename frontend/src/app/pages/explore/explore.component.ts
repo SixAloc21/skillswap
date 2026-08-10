@@ -76,8 +76,8 @@ export class ExploreComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((status) => {
         this.searchEngineLabel = status.elasticsearchAvailable
-          ? 'Busqueda avanzada activa'
-          : 'Busqueda en modo respaldo';
+          ? 'Busqueda con Elastic Cloud'
+          : 'Elastic Cloud no disponible';
       });
   }
 

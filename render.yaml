@@ -11,3 +11,7 @@ services:
     envVars:
       - key: SKILLSWAP_CORS_ALLOWED_ORIGINS
         value: http://localhost:4200,http://127.0.0.1:4200,https://frontend-six-taupe-c8r0pelv2y.vercel.app
+      - key: ELASTICSEARCH_URIS
+        sync: false
+      - key: ELASTICSEARCH_API_KEY
+        sync: false

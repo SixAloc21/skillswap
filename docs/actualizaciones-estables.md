@@ -38,7 +38,7 @@ La app Wear OS se encuentra actualmente en un proyecto Android Studio separado. 
 
 | Riesgo | Deteccion | Tratamiento |
 | --- | --- | --- |
-| Elasticsearch no disponible | Indicador `Busqueda en modo respaldo` | Mantener fallback y revisar `ELASTICSEARCH_URIS` |
+| Elastic Cloud no disponible | Health check o consultas con error | Revisar endpoint, API key, permisos y estado del despliegue antes de publicar |
 | CORS bloquea frontend | Error HTTP desde el navegador | Agregar el dominio a `SKILLSWAP_CORS_ALLOWED_ORIGINS` |
 | Backend de Render dormido | Primera consulta lenta | Mostrar carga y reintentar |
 | Wearable no conecta | Mensaje de error de red | Revisar `ApiConfig.BASE_URL` y conectividad |
@@ -48,8 +48,7 @@ La app Wear OS se encuentra actualmente en un proyecto Android Studio separado. 
 
 ## Base de datos
 
-- Elasticsearch almacena e indexa habilidades cuando esta disponible.
-- El modo de respaldo conserva habilidades en memoria para demostraciones.
+- Elastic Cloud almacena e indexa todas las habilidades; no existe un catalogo alterno en memoria.
 - Matches y contactos tambien viven en memoria y no sobreviven reinicios.
 - Una version productiva debe incorporar persistencia para usuarios, matches, contactos y tokens/dispositivos.
 

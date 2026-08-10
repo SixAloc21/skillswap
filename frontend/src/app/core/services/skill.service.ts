@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { CategorySummary, SearchStatus, Skill, SkillSearchFilters, SkillSuggestion } from '../models/skill.model';
 
@@ -47,8 +47,7 @@ export class SkillService {
   getSkills(): Observable<Skill[]> {
     return this.http.get<ApiSkill[]>(API_URL).pipe(
       map((skills) => skills.map((skill) => this.fromApiSkill(skill))),
-      tap((skills) => this.skillsSubject.next(skills)),
-      catchError(() => of(this.skillsSubject.value))
+      tap((skills) => this.skillsSubject.next(skills))
     );
   }
 
@@ -58,8 +57,7 @@ export class SkillService {
 
   getSkillById(id: string): Observable<Skill | undefined> {
     return this.http.get<ApiSkill>(`${API_URL}/${id}`).pipe(
-      map((skill) => this.fromApiSkill(skill)),
-      catchError(() => of(this.skillsSubject.value.find((skill) => skill.id === id)))
+      map((skill) => this.fromApiSkill(skill))
     );
   }
 
@@ -112,8 +110,7 @@ export class SkillService {
     }
 
     return this.http.get<ApiSkill[]>(`${API_URL}/search`, { params }).pipe(
-      map((skills) => skills.map((skill) => this.fromApiSkill(skill))),
-      catchError(() => of(this.filterSkills(this.skillsSubject.value, filters)))
+      map((skills) => skills.map((skill) => this.fromApiSkill(skill)))
     );
   }
 
@@ -125,37 +122,11 @@ export class SkillService {
     }
 
     const params = new HttpParams().set('q', trimmedQuery);
-    return this.http.get<SkillSuggestion[]>(`${API_URL}/suggestions`, { params }).pipe(catchError(() => of([])));
+    return this.http.get<SkillSuggestion[]>(`${API_URL}/suggestions`, { params });
   }
 
   getSearchStatus(): Observable<SearchStatus> {
-    return this.http.get<SearchStatus>(`${API_URL}/search-status`).pipe(
-      catchError(() =>
-        of({
-          engine: 'Modo respaldo',
-          elasticsearchAvailable: false,
-          indexName: 'skillswap-skills'
-        })
-      )
-    );
-  }
-
-  filterSkills(skills: Skill[], filters: SkillSearchFilters): Skill[] {
-    const normalizedQuery = filters.query.trim().toLowerCase();
-
-    return skills.filter((skill) => {
-      const matchesQuery =
-        !normalizedQuery ||
-        skill.title.toLowerCase().includes(normalizedQuery) ||
-        skill.description.toLowerCase().includes(normalizedQuery) ||
-        skill.fullDescription.toLowerCase().includes(normalizedQuery);
-
-      const matchesCategory = !filters.category || skill.category === filters.category;
-      const matchesModality = !filters.modality || skill.modality === filters.modality;
-      const matchesLevel = !filters.level || skill.level === filters.level;
-
-      return matchesQuery && matchesCategory && matchesModality && matchesLevel;
-    });
+    return this.http.get<SearchStatus>(`${API_URL}/search-status`);
   }
 
   addSkill(payload: NewSkillPayload): Observable<Skill> {
