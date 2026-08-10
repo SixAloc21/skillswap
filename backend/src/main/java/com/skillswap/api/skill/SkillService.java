@@ -27,6 +27,7 @@ public class SkillService {
     public List<SkillDocument> findAll() {
         NativeQuery query = NativeQuery.builder()
                 .withQuery(builder -> builder.matchAll(matchAll -> matchAll))
+                .withPageable(PageRequest.of(0, 100))
                 .build();
 
         ensureElasticsearchSeeded();
@@ -81,6 +82,7 @@ public class SkillService {
 
                     return bool;
                 }))
+                .withPageable(PageRequest.of(0, 100))
                 .build();
 
         ensureElasticsearchSeeded();
