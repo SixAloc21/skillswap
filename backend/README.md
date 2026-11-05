@@ -37,7 +37,7 @@ Desde `C:\SkillSwap\backend`:
 API disponible en:
 
 ```text
-http://localhost:8080
+https://skillswap-api-e7y8.onrender.com
 ```
 
 ## Endpoints principales
