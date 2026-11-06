@@ -1,0 +1,656 @@
+<section class="sessions-page">
+
+  <!-- ========================= -->
+  <!-- ENCABEZADO -->
+  <!-- ========================= -->
+
+  <div class="header">
+
+    <div>
+
+      <span class="header-badge">
+        PANEL ADMINISTRATIVO
+      </span>
+
+      <h1>
+        Administración de actividades
+      </h1>
+
+      <p>
+        Crea, consulta y administra las actividades
+        disponibles en SkillSwap Mobile.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="logout-button"
+      (click)="cerrarSesion()"
+    >
+      CERRAR SESIÓN
+    </button>
+
+  </div>
+
+
+  <!-- ========================= -->
+  <!-- NUEVA ACTIVIDAD -->
+  <!-- ========================= -->
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <div>
+
+        <h2>
+          Nueva actividad
+        </h2>
+
+        <p>
+          Ingresa los datos que posteriormente
+          serán consultados desde la aplicación móvil.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <label>
+      Nombre de la actividad
+    </label>
+
+    <input
+      type="text"
+      [(ngModel)]="session.nombre"
+      placeholder="Ej. Taller de Excel Básico"
+      [disabled]="actividadEnviada"
+    >
+
+
+    <label>
+      Descripción
+    </label>
+
+    <textarea
+      [(ngModel)]="session.descripcion"
+      placeholder="Describe brevemente la actividad"
+      [disabled]="actividadEnviada"
+      rows="4"
+    ></textarea>
+
+
+    <label>
+      Instructor
+    </label>
+
+    <input
+      type="text"
+      [(ngModel)]="session.instructor"
+      placeholder="Ej. Carlos Pérez"
+      [disabled]="actividadEnviada"
+    >
+
+
+    <div class="row">
+
+      <div>
+
+        <label>
+          Fecha
+        </label>
+
+        <input
+          type="date"
+          [(ngModel)]="session.fecha"
+          [disabled]="actividadEnviada"
+        >
+
+      </div>
+
+
+      <div>
+
+        <label>
+          Hora
+        </label>
+
+        <input
+          type="time"
+          [(ngModel)]="session.hora"
+          [disabled]="actividadEnviada"
+        >
+
+      </div>
+
+    </div>
+
+
+    <label>
+      Capacidad de la actividad
+    </label>
+
+    <input
+      type="number"
+      [(ngModel)]="session.cupo"
+      min="1"
+      [disabled]="actividadEnviada"
+    >
+
+
+    <button
+      class="primary-button"
+      type="button"
+      (click)="crearActividad()"
+      [disabled]="guardando || actividadEnviada"
+    >
+
+      {{
+        guardando
+          ? 'GUARDANDO...'
+          : actividadEnviada
+            ? 'ACTIVIDAD CREADA'
+            : 'CREAR ACTIVIDAD'
+      }}
+
+    </button>
+
+  </div>
+
+
+  <!-- ========================= -->
+  <!-- ACTIVIDAD CREADA -->
+  <!-- ========================= -->
+
+  <div
+    class="result"
+    *ngIf="actividadCreada"
+  >
+
+    <div class="success-header">
+
+      <div class="success-icon">
+        ✓
+      </div>
+
+      <div>
+
+        <h2>
+          Actividad creada correctamente
+        </h2>
+
+        <p>
+          La actividad ya está almacenada
+          en PostgreSQL.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="resultado-contenido">
+
+      <div class="datos-actividad">
+
+        <h3>
+          {{ session.nombre }}
+        </h3>
+
+        <p>
+          <strong>ID:</strong>
+          {{ session.id }}
+        </p>
+
+        <p>
+          <strong>Instructor:</strong>
+          {{ session.instructor }}
+        </p>
+
+        <p>
+          <strong>Fecha:</strong>
+          {{ session.fecha }}
+        </p>
+
+        <p>
+          <strong>Hora:</strong>
+          {{ session.hora }}
+        </p>
+
+        <p>
+          <strong>Capacidad total:</strong>
+          {{ session.cupoTotal ?? session.cupo }}
+        </p>
+
+        <p>
+          <strong>Registrados:</strong>
+          {{
+            (session.cupoTotal ?? session.cupo)
+            - session.cupo
+          }}
+        </p>
+
+        <p>
+          <strong>Lugares disponibles:</strong>
+          {{ session.cupo }}
+        </p>
+
+        <p>
+          <strong>Descripción:</strong>
+          {{ session.descripcion }}
+        </p>
+
+
+        <button
+          class="secondary-button"
+          type="button"
+          (click)="nuevaActividad()"
+        >
+          NUEVA ACTIVIDAD
+        </button>
+
+      </div>
+
+
+      <div
+        class="qr-container"
+        *ngIf="qrImagen"
+      >
+
+        <h3>
+          Código QR
+        </h3>
+
+        <img
+          [src]="qrImagen"
+          alt="Código QR de la actividad SkillSwap"
+        >
+
+        <p>
+          Escanea este código desde
+          <strong>
+            SkillSwap Mobile
+          </strong>.
+        </p>
+
+        <small>
+          El QR contiene el ID
+          {{ session.id }}
+        </small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================= -->
+  <!-- HISTORIAL -->
+  <!-- ========================= -->
+
+  <div class="card historial">
+
+    <div class="historial-header">
+
+      <div>
+
+        <h2>
+          Actividades creadas
+        </h2>
+
+        <p>
+          Consulta las actividades almacenadas,
+          revisa sus participantes y vuelve
+          a generar su código QR.
+        </p>
+
+      </div>
+
+
+      <button
+        class="refresh-button"
+        type="button"
+        (click)="cargarSesiones()"
+        [disabled]="cargandoSesiones"
+      >
+
+        {{
+          cargandoSesiones
+            ? 'ACTUALIZANDO...'
+            : 'ACTUALIZAR'
+        }}
+
+      </button>
+
+    </div>
+
+
+    <div
+      class="loading"
+      *ngIf="cargandoSesiones"
+    >
+      Cargando actividades...
+    </div>
+
+
+    <div
+      class="empty-state"
+      *ngIf="
+        !cargandoSesiones &&
+        sesiones.length === 0
+      "
+    >
+
+      <h3>
+        No hay actividades todavía
+      </h3>
+
+      <p>
+        Las actividades creadas aparecerán aquí.
+      </p>
+
+    </div>
+
+
+    <div
+      class="actividades-grid"
+      *ngIf="
+        !cargandoSesiones &&
+        sesiones.length > 0
+      "
+    >
+
+      <article
+        class="actividad-card"
+        *ngFor="let actividad of sesiones"
+      >
+
+        <div class="actividad-card-top">
+
+          <span class="actividad-id">
+            ID #{{ actividad.id }}
+          </span>
+
+
+          <span
+            class="cupo-badge"
+            [class.sin-cupo]="actividad.cupo === 0"
+          >
+
+            {{
+              actividad.cupo === 0
+                ? 'SIN CUPO'
+                : actividad.cupo + ' lugares'
+            }}
+
+          </span>
+
+        </div>
+
+
+        <h3>
+          {{ actividad.nombre }}
+        </h3>
+
+
+        <p class="descripcion">
+          {{ actividad.descripcion }}
+        </p>
+
+
+        <div class="actividad-datos">
+
+          <p>
+            <strong>Instructor:</strong>
+            {{ actividad.instructor }}
+          </p>
+
+          <p>
+            <strong>Fecha:</strong>
+            {{ actividad.fecha }}
+          </p>
+
+          <p>
+            <strong>Hora:</strong>
+            {{ actividad.hora }}
+          </p>
+
+          <p>
+            <strong>Capacidad total:</strong>
+            {{ actividad.cupoTotal ?? actividad.cupo }}
+          </p>
+
+          <p>
+            <strong>Registrados:</strong>
+            {{
+              (actividad.cupoTotal ?? actividad.cupo)
+              - actividad.cupo
+            }}
+          </p>
+
+          <p>
+            <strong>Lugares disponibles:</strong>
+            {{ actividad.cupo }}
+          </p>
+
+        </div>
+
+
+        <div class="actividad-acciones">
+
+          <button
+            class="qr-button"
+            type="button"
+            (click)="verQr(actividad)"
+          >
+            VER CÓDIGO QR
+          </button>
+
+
+          <button
+            class="secondary-button"
+            type="button"
+            (click)="verParticipantes(actividad)"
+          >
+            VER PARTICIPANTES
+          </button>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================= -->
+  <!-- MODAL QR -->
+  <!-- ========================= -->
+
+  <div
+    class="qr-modal-container"
+    *ngIf="
+      sesionSeleccionada &&
+      qrHistorial
+    "
+  >
+
+    <div class="qr-history-card">
+
+      <button
+        class="close-button"
+        type="button"
+        (click)="cerrarQrHistorial()"
+      >
+        ×
+      </button>
+
+      <span class="header-badge">
+        CÓDIGO QR
+      </span>
+
+      <h2>
+        {{ sesionSeleccionada.nombre }}
+      </h2>
+
+      <p>
+        ID de actividad:
+        <strong>
+          {{ sesionSeleccionada.id }}
+        </strong>
+      </p>
+
+      <img
+        [src]="qrHistorial"
+        alt="Código QR de la actividad"
+      >
+
+      <p class="qr-instruction">
+        Escanea este código desde
+        <strong>
+          SkillSwap Mobile
+        </strong>
+        para consultar la actividad.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================= -->
+  <!-- MODAL PARTICIPANTES -->
+  <!-- ========================= -->
+
+  <div
+    class="qr-modal-container"
+    *ngIf="sesionParticipantes"
+  >
+
+    <div
+      class="qr-history-card participantes-card"
+    >
+
+      <button
+        class="close-button"
+        type="button"
+        (click)="cerrarParticipantes()"
+      >
+        ×
+      </button>
+
+      <span class="header-badge">
+        PARTICIPANTES
+      </span>
+
+      <h2>
+        {{ sesionParticipantes.nombre }}
+      </h2>
+
+
+      <div class="resumen-participantes">
+
+        <p>
+          <strong>ID:</strong>
+          {{ sesionParticipantes.id }}
+        </p>
+
+        <p>
+          <strong>Capacidad total:</strong>
+          {{
+            sesionParticipantes.cupoTotal
+            ?? sesionParticipantes.cupo
+          }}
+        </p>
+
+        <p>
+          <strong>Registrados:</strong>
+          {{ participantes.length }}
+        </p>
+
+        <p>
+          <strong>Lugares disponibles:</strong>
+          {{ sesionParticipantes.cupo }}
+        </p>
+
+      </div>
+
+
+      <div
+        class="loading"
+        *ngIf="cargandoParticipantes"
+      >
+        Cargando participantes...
+      </div>
+
+
+      <div
+        class="empty-state"
+        *ngIf="
+          !cargandoParticipantes &&
+          participantes.length === 0
+        "
+      >
+
+        <h3>
+          Sin participantes
+        </h3>
+
+        <p>
+          Todavía nadie se ha registrado
+          en esta actividad.
+        </p>
+
+      </div>
+
+
+      <div
+        class="participantes-lista"
+        *ngIf="
+          !cargandoParticipantes &&
+          participantes.length > 0
+        "
+      >
+
+        <div
+          class="participante-item"
+          *ngFor="
+            let participante of participantes;
+            let i = index
+          "
+        >
+
+          <div class="participante-numero">
+            {{ i + 1 }}
+          </div>
+
+
+          <div class="participante-info">
+
+            <strong>
+              {{ participante.nombreUsuario }}
+            </strong>
+
+            <p>
+              Registrado:
+              {{
+                participante.fechaRegistro
+                | date:'dd/MM/yyyy h:mm a'
+              }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>

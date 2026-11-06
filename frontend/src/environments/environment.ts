@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8080'
+  apiBaseUrl: 'https://skillswap-api-e7y8.onrender.com'
 };

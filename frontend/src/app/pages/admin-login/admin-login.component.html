@@ -1,0 +1,68 @@
+<section class="login-page">
+
+  <div class="login-card">
+
+    <span class="login-badge">
+      SKILLSWAP
+    </span>
+
+    <h1>
+      Panel administrativo
+    </h1>
+
+    <p class="login-description">
+      Ingresa tus credenciales para administrar
+      las actividades de SkillSwap.
+    </p>
+
+
+    <label>
+      Usuario
+    </label>
+
+    <input
+      type="text"
+      [(ngModel)]="usuario"
+      placeholder="Usuario administrador"
+      [disabled]="cargando"
+    >
+
+
+    <label>
+      Contraseña
+    </label>
+
+    <input
+      type="password"
+      [(ngModel)]="password"
+      placeholder="Contraseña"
+      [disabled]="cargando"
+      (keyup.enter)="iniciarSesion()"
+    >
+
+
+    <div
+      class="error-message"
+      *ngIf="errorMensaje"
+    >
+      {{ errorMensaje }}
+    </div>
+
+
+    <button
+      type="button"
+      (click)="iniciarSesion()"
+      [disabled]="cargando"
+    >
+
+      {{
+        cargando
+          ? 'INICIANDO...'
+          : 'INICIAR SESIÓN'
+      }}
+
+    </button>
+
+  </div>
+
+</section>
