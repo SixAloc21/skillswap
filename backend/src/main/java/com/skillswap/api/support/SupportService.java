@@ -1,6 +1,7 @@
 package com.skillswap.api.support;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,21 +12,18 @@ import java.util.List;
 @Service
 public class SupportService {
 
-    private final SupportConversationRepository
-            conversationRepository;
-
-    private final SupportMessageRepository
-            messageRepository;
+    private final SupportConversationRepository conversationRepository;
+    private final SupportMessageRepository messageRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public SupportService(
             SupportConversationRepository conversationRepository,
-            SupportMessageRepository messageRepository
+            SupportMessageRepository messageRepository,
+            SimpMessagingTemplate messagingTemplate
     ) {
-        this.conversationRepository =
-                conversationRepository;
-
-        this.messageRepository =
-                messageRepository;
+        this.conversationRepository = conversationRepository;
+        this.messageRepository = messageRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
@@ -65,9 +63,19 @@ public class SupportService {
                 ahora
         );
 
-        return conversationRepository.save(
-                conversacion
+        SupportConversation conversacionGuardada =
+                conversationRepository.save(
+                        conversacion
+                );
+
+        // Notificar en tiempo real que existe
+        // una nueva conversación de soporte.
+        messagingTemplate.convertAndSend(
+                "/topic/support/conversations",
+                conversacionGuardada
         );
+
+        return conversacionGuardada;
     }
 
     public List<SupportConversation>
@@ -82,6 +90,16 @@ public class SupportService {
             String nombreUsuario
     ) {
 
+        if (
+                nombreUsuario == null
+                || nombreUsuario.trim().isEmpty()
+        ) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "El nombre del usuario es obligatorio"
+            );
+        }
+
         return conversationRepository
                 .findByNombreUsuarioIgnoreCaseOrderByUltimaActualizacionDesc(
                         nombreUsuario.trim()
@@ -94,7 +112,9 @@ public class SupportService {
     ) {
 
         return conversationRepository
-                .findById(conversationId)
+                .findById(
+                        conversationId
+                )
                 .orElseThrow(
                         () -> new ResponseStatusException(
                                 HttpStatus.NOT_FOUND,
@@ -138,8 +158,10 @@ public class SupportService {
 
         String emisorNormalizado =
                 emisor == null
-                ? ""
-                : emisor.trim().toUpperCase();
+                        ? ""
+                        : emisor
+                            .trim()
+                            .toUpperCase();
 
         if (
                 !emisorNormalizado.equals("USUARIO")
@@ -183,6 +205,13 @@ public class SupportService {
                 conversacion
         );
 
+        // Publicar el nuevo mensaje
+        // en tiempo real.
+        messagingTemplate.convertAndSend(
+                "/topic/support/" + conversationId,
+                mensajeGuardado
+        );
+
         return mensajeGuardado;
     }
 
@@ -219,8 +248,18 @@ public class SupportService {
                 LocalDateTime.now()
         );
 
-        return conversationRepository.save(
-                conversacion
+        SupportConversation conversacionActualizada =
+                conversationRepository.save(
+                        conversacion
+                );
+
+        // Opcional pero útil:
+        // avisar que cambió el estado de la conversación.
+        messagingTemplate.convertAndSend(
+                "/topic/support/conversations",
+                conversacionActualizada
         );
+
+        return conversacionActualizada;
     }
 }

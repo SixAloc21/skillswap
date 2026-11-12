@@ -1,3 +1,4 @@
+
 package com.skillswap.api.registration;
 
 import com.skillswap.api.session.Session;
@@ -26,23 +27,35 @@ public class RegistrationService {
         this.sessionRepository = sessionRepository;
     }
 
-    public List<Registration> obtenerPorUsuario(
-        String nombreUsuario
-) {
+    // =========================================
+    // CONSULTAR REGISTROS POR USUARIO
+    // =========================================
 
-    return registrationRepository
-            .findByNombreUsuarioIgnoreCase(
-                    nombreUsuario.trim()
-            );
-}
+    public List<Registration> obtenerPorUsuario(
+            String nombreUsuario
+    ) {
+        return registrationRepository
+                .findByNombreUsuarioIgnoreCase(
+                        nombreUsuario.trim()
+                );
+    }
+
+    // =========================================
+    // CREAR REGISTRO CON CONTROL DE CONCURRENCIA
+    // =========================================
 
     @Transactional
     public Registration crearRegistro(
             Registration registration
     ) {
 
+        // Obtener la sesion con bloqueo de escritura
+        // Evita que dos transacciones modifiquen
+        // el cupo de la misma actividad simultaneamente.
         Session session = sessionRepository
-                .findById(registration.getSessionId())
+                .buscarSesionConBloqueo(
+                        registration.getSessionId()
+                )
                 .orElseThrow(() ->
                         new ResponseStatusException(
                                 HttpStatus.NOT_FOUND,
@@ -50,15 +63,16 @@ public class RegistrationService {
                         )
                 );
 
+        // Normalizar nombre
         String nombreUsuario =
                 registration.getNombreUsuario().trim();
 
-        boolean yaRegistrado =
-                registrationRepository
-                        .existsBySessionIdAndNombreUsuarioIgnoreCase(
-                                registration.getSessionId(),
-                                nombreUsuario
-                        );
+        // Verificar duplicados
+        boolean yaRegistrado = registrationRepository
+                .existsBySessionIdAndNombreUsuarioIgnoreCase(
+                        registration.getSessionId(),
+                        nombreUsuario
+                );
 
         if (yaRegistrado) {
             throw new ResponseStatusException(
@@ -67,6 +81,7 @@ public class RegistrationService {
             );
         }
 
+        // Verificar cupo
         if (session.getCupo() <= 0) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
@@ -74,27 +89,31 @@ public class RegistrationService {
             );
         }
 
-        registration.setNombreUsuario(
-                nombreUsuario
-        );
+        // Preparar inscripcion
+        registration.setNombreUsuario(nombreUsuario);
 
         registration.setFechaRegistro(
                 LocalDateTime.now()
         );
 
+        // Guardar inscripcion
         Registration nuevoRegistro =
-                registrationRepository.save(
-                        registration
-                );
+                registrationRepository.save(registration);
 
+        // Descontar un lugar
         session.setCupo(
                 session.getCupo() - 1
         );
 
+        // Actualizar cupo
         sessionRepository.save(session);
 
         return nuevoRegistro;
     }
+
+    // =========================================
+    // CONSULTAR REGISTROS POR SESION
+    // =========================================
 
     public List<Registration> obtenerPorSesion(
             Long sessionId

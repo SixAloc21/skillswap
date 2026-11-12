@@ -32,7 +32,7 @@ cd backend
 API:
 
 ```text
-http://localhost:8080
+https://skillswap-api-e7y8.onrender.com
 ```
 
 ## Ejecutar frontend

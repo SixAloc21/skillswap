@@ -1,0 +1,328 @@
+<div class="support-page">
+
+  <header class="support-header">
+
+    <div>
+      <p class="eyebrow">
+        PANEL ADMINISTRATIVO
+      </p>
+
+      <h1>
+        Soporte técnico
+      </h1>
+
+      <p>
+        Consulta y responde mensajes
+        enviados desde SkillSwap Mobile.
+      </p>
+    </div>
+
+    <div class="header-actions">
+
+      <button
+        type="button"
+        (click)="irActividades()"
+      >
+        ACTIVIDADES
+      </button>
+
+      <button
+        type="button"
+        class="logout"
+        (click)="cerrarSesion()"
+      >
+        CERRAR SESIÓN
+      </button>
+
+    </div>
+
+  </header>
+
+  <main class="support-layout">
+
+    <section class="conversation-list">
+
+      <div class="section-header">
+
+        <div>
+          <h2>
+            Conversaciones
+          </h2>
+
+          <p>
+            Solicitudes registradas.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          (click)="cargarConversaciones()"
+        >
+          ACTUALIZAR
+        </button>
+
+      </div>
+
+      <p
+        *ngIf="cargandoConversaciones"
+      >
+        Cargando conversaciones...
+      </p>
+
+      <p
+        *ngIf="
+          !cargandoConversaciones &&
+          conversaciones.length === 0
+        "
+      >
+        No existen conversaciones.
+      </p>
+
+      <button
+        *ngFor="
+          let conversacion
+          of conversaciones
+        "
+        type="button"
+        class="conversation-card"
+        [class.active]="
+          conversacionSeleccionada?.id
+          === conversacion.id
+        "
+        (click)="
+          abrirConversacion(
+            conversacion
+          )
+        "
+      >
+
+        <div class="conversation-top">
+
+          <strong>
+            {{ conversacion.nombreUsuario }}
+          </strong>
+
+          <span
+            class="status"
+            [class.closed]="
+              conversacion.estado ===
+              'CERRADA'
+            "
+          >
+            {{ conversacion.estado }}
+          </span>
+
+        </div>
+
+        <small>
+          Conversación
+          #{{ conversacion.id }}
+        </small>
+
+        <small>
+          {{
+            conversacion.ultimaActualizacion
+            | date:'dd/MM/yyyy h:mm a'
+          }}
+        </small>
+
+      </button>
+
+    </section>
+
+
+    <section class="chat-panel">
+
+      <div
+        *ngIf="
+          !conversacionSeleccionada
+        "
+        class="empty-chat"
+      >
+
+        <h2>
+          Selecciona una conversación
+        </h2>
+
+        <p>
+          Elige una solicitud para
+          consultar sus mensajes.
+        </p>
+
+      </div>
+
+
+      <ng-container
+        *ngIf="
+          conversacionSeleccionada
+        "
+      >
+
+        <div class="chat-header">
+
+          <div>
+
+            <h2>
+              {{
+                conversacionSeleccionada
+                  .nombreUsuario
+              }}
+            </h2>
+
+            <p>
+              Conversación
+              #{{
+                conversacionSeleccionada
+                  .id
+              }}
+            </p>
+
+          </div>
+
+          <div class="chat-actions">
+
+            <button
+              type="button"
+              (click)="
+                cargarMensajes(
+                  conversacionSeleccionada.id
+                )
+              "
+            >
+              ACTUALIZAR
+            </button>
+
+            <button
+              *ngIf="
+                conversacionSeleccionada
+                  .estado === 'ABIERTA'
+              "
+              type="button"
+              (click)="
+                cerrarConversacion()
+              "
+            >
+              CERRAR
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="messages">
+
+          <p
+            *ngIf="cargandoMensajes"
+          >
+            Cargando mensajes...
+          </p>
+
+          <p
+            *ngIf="
+              !cargandoMensajes &&
+              mensajes.length === 0
+            "
+          >
+            Todavía no existen mensajes.
+          </p>
+
+          <div
+            *ngFor="
+              let mensaje
+              of mensajes
+            "
+            class="message-row"
+            [class.admin]="
+              mensaje.emisor ===
+              'ADMIN'
+            "
+          >
+
+            <div class="message">
+
+              <strong>
+                {{
+                  mensaje.emisor ===
+                  'ADMIN'
+                  ? 'Soporte'
+                  : 'Usuario'
+                }}
+              </strong>
+
+              <p>
+                {{ mensaje.mensaje }}
+              </p>
+
+              <small>
+                {{
+                  mensaje.fechaEnvio
+                  | date:'dd/MM/yyyy h:mm a'
+                }}
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div
+          *ngIf="
+            conversacionSeleccionada
+              .estado === 'ABIERTA'
+          "
+          class="message-form"
+        >
+
+          <textarea
+            [(ngModel)]="
+              nuevoMensaje
+            "
+            placeholder="
+              Escribe una respuesta...
+            "
+            rows="3"
+          ></textarea>
+
+          <button
+            type="button"
+            [disabled]="
+              enviandoMensaje ||
+              nuevoMensaje
+                .trim()
+                .length === 0
+            "
+            (click)="
+              enviarMensaje()
+            "
+          >
+            {{
+              enviandoMensaje
+              ? 'ENVIANDO...'
+              : 'ENVIAR'
+            }}
+          </button>
+
+        </div>
+
+
+        <div
+          *ngIf="
+            conversacionSeleccionada
+              .estado === 'CERRADA'
+          "
+          class="closed-message"
+        >
+          Esta conversación
+          está cerrada.
+        </div>
+
+      </ng-container>
+
+    </section>
+
+  </main>
+
+</div>

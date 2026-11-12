@@ -41,7 +41,7 @@ cd backend
 3. Verificar estado:
 
 ```text
-http://localhost:8080/actuator/health
+https://skillswap-api-e7y8.onrender.com/actuator/health
 ```
 
 ## Contacto

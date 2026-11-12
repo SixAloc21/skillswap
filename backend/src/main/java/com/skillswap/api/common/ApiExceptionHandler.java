@@ -1,3 +1,4 @@
+
 package com.skillswap.api.common;
 
 import org.springframework.http.HttpStatus;
@@ -15,13 +16,24 @@ import java.util.NoSuchElementException;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    // =========================================
+    // ERROR 400 - VALIDACIONES DE FORMULARIOS
+    // =========================================
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, Object> handleValidation(MethodArgumentNotValidException exception) {
+    public Map<String, Object> handleValidation(
+            MethodArgumentNotValidException exception
+    ) {
         Map<String, String> fields = new LinkedHashMap<>();
 
-        for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
-            fields.put(fieldError.getField(), fieldError.getDefaultMessage());
+        for (FieldError fieldError :
+                exception.getBindingResult().getFieldErrors()) {
+
+            fields.put(
+                    fieldError.getField(),
+                    fieldError.getDefaultMessage()
+            );
         }
 
         return Map.of(
@@ -32,14 +44,41 @@ public class ApiExceptionHandler {
         );
     }
 
+    // =========================================
+    // ERROR 400 - REGLAS DE NEGOCIO
+    // =========================================
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleIllegalArgument(
+            IllegalArgumentException exception
+    ) {
+        return Map.of(
+                "timestamp", Instant.now(),
+                "status", 400,
+                "error", "Bad Request",
+                "message", exception.getMessage() != null
+                        ? exception.getMessage()
+                        : "Datos de entrada inválidos"
+        );
+    }
+
+    // =========================================
+    // ERROR 404 - RECURSO NO ENCONTRADO
+    // =========================================
+
     @ExceptionHandler(NoSuchElementException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handleNotFound(NoSuchElementException exception) {
+    public Map<String, Object> handleNotFound(
+            NoSuchElementException exception
+    ) {
         return Map.of(
                 "timestamp", Instant.now(),
                 "status", 404,
                 "error", "Not found",
-                "message", exception.getMessage()
+                "message", exception.getMessage() != null
+                        ? exception.getMessage()
+                        : "Recurso no encontrado"
         );
     }
 }

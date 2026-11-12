@@ -1,0 +1,178 @@
+.support-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #f6f6fb;
+}
+
+.support-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 800;
+  color: #7051c7;
+}
+
+.support-header h1 {
+  margin: 4px 0;
+  font-size: 36px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+button {
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 1px solid #ddddE8;
+  background: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.logout {
+  background: #7051c7;
+  color: white;
+}
+
+.support-layout {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 24px;
+}
+
+.conversation-list,
+.chat-panel {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  min-height: 600px;
+}
+
+.section-header,
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.conversation-card {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 10px;
+  padding: 15px;
+}
+
+.conversation-card.active {
+  border-color: #7051c7;
+  background: #f4f0ff;
+}
+
+.conversation-top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.conversation-card small {
+  display: block;
+  margin-top: 6px;
+}
+
+.status {
+  font-size: 11px;
+  background: #e6f8ee;
+  color: #247447;
+  padding: 5px 9px;
+  border-radius: 20px;
+}
+
+.status.closed {
+  background: #eeeeF3;
+  color: #666;
+}
+
+.chat-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 480px;
+  padding: 20px 0;
+}
+
+.message-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 12px;
+}
+
+.message-row.admin {
+  justify-content: flex-end;
+}
+
+.message {
+  max-width: 70%;
+  padding: 14px;
+  border-radius: 16px;
+  background: #eeeeF5;
+}
+
+.message-row.admin .message {
+  background: #e7ddff;
+}
+
+.message p {
+  margin: 6px 0;
+}
+
+.message-form {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.message-form textarea {
+  flex: 1;
+  resize: none;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.empty-chat,
+.closed-message {
+  text-align: center;
+  margin: auto;
+  color: #777;
+}
+
+@media (max-width: 900px) {
+
+  .support-page {
+    padding: 20px;
+  }
+
+  .support-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .support-header {
+    flex-direction: column;
+  }
+}

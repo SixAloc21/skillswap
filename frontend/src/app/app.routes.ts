@@ -21,10 +21,18 @@ import {
 } from './pages/admin-sessions/admin-sessions.component';
 
 import {
+  AdminSupportComponent
+} from './pages/admin-support/admin-support.component';
+
+import {
   adminAuthGuard
 } from './core/guards/admin-auth.guard';
 
 export const routes: Routes = [
+
+  // =========================
+  // PÁGINAS PÚBLICAS
+  // =========================
 
   {
     path: '',
@@ -107,6 +115,19 @@ export const routes: Routes = [
       adminAuthGuard
     ],
     title: 'SkillSwap | Administrar sesiones'
+  },
+
+  // =========================
+  // ADMIN - SOPORTE TÉCNICO
+  // =========================
+
+  {
+    path: 'admin/support',
+    component: AdminSupportComponent,
+    canActivate: [
+      adminAuthGuard
+    ],
+    title: 'SkillSwap | Soporte técnico'
   },
 
   // =========================

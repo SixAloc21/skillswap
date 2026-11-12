@@ -69,7 +69,7 @@ cd backend
 El backend se sirve por defecto en:
 
 ```text
-http://localhost:8080/
+https://skillswap-api-e7y8.onrender.com/
 ```
 
 ## Estructura general

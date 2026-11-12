@@ -45,7 +45,7 @@ Parametros:
 Ejemplo:
 
 ```text
-http://localhost:8080/api/skills/search?q=ingles&category=Idiomas&modality=ONLINE&level=INTERMEDIO
+https://skillswap-api-e7y8.onrender.com/api/skills/search?q=ingles&category=Idiomas&modality=ONLINE&level=INTERMEDIO
 ```
 
 ## Busqueda predictiva
